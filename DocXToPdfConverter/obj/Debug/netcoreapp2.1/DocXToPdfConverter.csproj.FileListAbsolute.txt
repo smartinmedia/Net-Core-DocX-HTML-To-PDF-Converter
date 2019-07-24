@@ -1,0 +1,8 @@
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\bin\Debug\netcoreapp2.1\DocXToPdfConverter.deps.json
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\bin\Debug\netcoreapp2.1\DocXToPdfConverter.runtimeconfig.json
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\bin\Debug\netcoreapp2.1\DocXToPdfConverter.runtimeconfig.dev.json
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\bin\Debug\netcoreapp2.1\DocXToPdfConverter.dll
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\obj\Debug\netcoreapp2.1\DocXToPdfConverter.csproj.CoreCompileInputs.cache
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\obj\Debug\netcoreapp2.1\DocXToPdfConverter.AssemblyInfoInputs.cache
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\obj\Debug\netcoreapp2.1\DocXToPdfConverter.AssemblyInfo.cs
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\obj\Debug\netcoreapp2.1\DocXToPdfConverter.csprojAssemblyReference.cache

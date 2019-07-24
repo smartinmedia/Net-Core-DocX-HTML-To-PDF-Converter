@@ -1,0 +1,67 @@
+{
+  "format": 1,
+  "restore": {
+    "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj": {}
+  },
+  "projects": {
+    "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj",
+        "projectName": "DocXToPdfConverter",
+        "projectPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj",
+        "packagesPath": "C:\\Users\\ThinkPad User\\.nuget\\packages\\",
+        "outputPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\ThinkPad User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.1": {
+          "dependencies": {
+            "DocumentFormat.OpenXml": {
+              "target": "Package",
+              "version": "[2.10.0-beta0002, )"
+            },
+            "Microsoft.NETCore.App": {
+              "target": "Package",
+              "version": "[2.1.0, )",
+              "autoReferenced": true
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[4.5.1, )"
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}
