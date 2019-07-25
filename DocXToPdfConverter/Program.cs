@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Website.BackgroundWorkers;
@@ -18,6 +17,8 @@ namespace DocXToPdfConverter
 
             //Prepare texts, which you want to insert into the custom fields in the template (remember
             //to use start and stop tags and store in a Dictionary.
+            //Note that line breaks can be inserted as what you define them in ReplacementDictionaries.NewLineTag (here we use <br/>).
+
             var myDictionary = new ReplacementDictionaries();
             myDictionary.NewLineTag = "<br/>";
             myDictionary.TextReplacementStartTag = "##";
@@ -25,7 +26,6 @@ namespace DocXToPdfConverter
             myDictionary.ImageReplacementStartTag = "++";
             myDictionary.ImageReplacementEndTag = "++";
 
-            //Note that line breaks can be inserted as <w:br />
             //You should be able to also use other OpenXML tags in your strings
             myDictionary.TextReplacements = new Dictionary<string, string>
             {
