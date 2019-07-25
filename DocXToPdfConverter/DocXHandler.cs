@@ -7,6 +7,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocXToPdfConverter;
+using OpenXmlPowerTools;
 using A = DocumentFormat.OpenXml.Drawing;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
@@ -22,37 +23,90 @@ namespace Website.BackgroundWorkers
 
         public DocXHandler(string docXTemplateFilename, ReplacementDictionaries rep)
         {
-            _docxMs = GetWordDocXAsMemoryStream(docXTemplateFilename);
+            _docxMs = StreamHandler.GetFileAsMemoryStream(docXTemplateFilename);
             _rep = rep;
+            
         }
 
-        private MemoryStream GetWordDocXAsMemoryStream(string templateFilename)
+        public void ReplaceTextsAndImages()
         {
-            MemoryStream ms = new MemoryStream();
-            using (FileStream file = new FileStream(templateFilename, FileMode.Open, FileAccess.Read))
-                file.CopyTo(ms);
-
-            //InsertAPicture(ms, jpegImageFilename);
-
-            return ms;
+            ReplaceTexts();
+            
         }
+       
 
-        public void ReplaceTexts()
+        public MemoryStream ReplaceTexts()
         {
             using (WordprocessingDocument doc =
                 WordprocessingDocument.Open(_docxMs, true))
             {
+                //REMOVE THESE Markups, because they break up the text into multiple pieces, 
+                //thereby preventing simple search and replace
+                SimplifyMarkupSettings settings = new SimplifyMarkupSettings
+                {
+                    RemoveComments = true,
+                    RemoveContentControls = true,
+                    RemoveEndAndFootNotes = true,
+                    RemoveFieldCodes = false,
+                    RemoveLastRenderedPageBreak = true,
+                    RemovePermissions = true,
+                    RemoveProof = true,
+                    RemoveRsidInfo = true,
+                    RemoveSmartTags = true,
+                    RemoveSoftHyphens = true,
+                    ReplaceTabsWithSpaces = true
+                };
+                MarkupSimplifier.SimplifyMarkup(doc, settings);
+
                 var document = doc.MainDocumentPart.Document;
 
                 foreach (var text in document.Descendants<Text>()) // <<< Here
                 {
-                    if (text.Text.Contains("text-to-replace"))
+                    foreach (var replace in _rep.TextReplacements)
                     {
-                        
-                        text.Text = text.Text.Replace("text-to-replace", "replaced-text");
+                        if (text.Text.Contains(_rep.TextReplacementStartTag + replace.Key + _rep.TextReplacementEndTag))
+                        {
+                            if (replace.Value.Contains(_rep.NewLineTag))//If we have line breaks present
+                            {
+                                string[] repArray = replace.Value.Split(new string[] {_rep.NewLineTag}, StringSplitOptions.None);
+
+                                var lastInsertedText = text;
+                                var lastInsertedBreak = new Break();
+
+                                for (var i = 0; i < repArray.Length; i++)
+                                {
+                                    if (i == 0)//The text is only replaced with the first part of the replacement array
+                                    {
+                                        text.Text = text.Text.Replace(_rep.TextReplacementStartTag + replace.Key + _rep.TextReplacementEndTag, repArray[i]);
+
+                                    }
+                                    else
+                                    {
+                                        var tmpText = new Text(repArray[i]);
+                                        var tmpBreak = new Break();
+                                        text.Parent.InsertAfter(tmpBreak, lastInsertedText);
+                                        lastInsertedBreak = tmpBreak;
+                                        text.Parent.InsertAfter(tmpText, lastInsertedBreak);
+                                        lastInsertedText = tmpText;
+                                    }
+
+                                }
+
+                            }
+                            else
+                            {
+                                text.Text = text.Text.Replace(_rep.TextReplacementStartTag + replace.Key + _rep.TextReplacementEndTag, replace.Value);
+
+                            }
+                        }
+
                     }
                 }
+
             }
+
+            _docxMs.Position = 0;
+            return _docxMs;
         }
 
         public void AppendImageToElement(MemoryStream imageMemoryStream)
@@ -168,6 +222,6 @@ namespace Website.BackgroundWorkers
             return ImagePartType.Jpeg;
         }
 
-
+        
     }
 }
