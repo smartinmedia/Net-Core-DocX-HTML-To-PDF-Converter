@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -31,11 +32,21 @@ namespace Website.BackgroundWorkers
             
         }
 
-        public MemoryStream ReplaceTextsAndImages()
+        public MemoryStream ReplaceAll()
         {
-            ReplaceTexts();
-            ReplaceTableRows();
-            ReplaceImages();
+            if (_rep.TextReplacements.Count > 0)
+            {
+                ReplaceTexts();
+            }
+
+            if (_rep.TableReplacements.Count > 0 && _rep.TableReplacements.First().Count > 0)
+            {
+                ReplaceTableRows();
+            }
+            if (_rep.ImageReplacements.Count > 0)
+            { 
+                ReplaceImages();
+            }
             _docxMs.Position = 0;
 
             return _docxMs;
@@ -44,6 +55,8 @@ namespace Website.BackgroundWorkers
 
         public MemoryStream ReplaceTexts()
         {
+            if (_rep.TextReplacements.Count == 0 || _rep.TextReplacements == null)
+                return null;
             using (WordprocessingDocument doc =
                 WordprocessingDocument.Open(_docxMs, true))
             {
@@ -103,6 +116,9 @@ namespace Website.BackgroundWorkers
 
         public MemoryStream ReplaceTableRows()
         {
+            if (_rep.TableReplacements.Count == 0 || _rep.TableReplacements == null)
+                return null;
+
             using (WordprocessingDocument doc =
                 WordprocessingDocument.Open(_docxMs, true))
             {
@@ -118,19 +134,21 @@ namespace Website.BackgroundWorkers
                     // where the text is inside a table cell --> this is the row we are searching for.
                     var textElement = document.Body.Descendants<Text>()
                         .FirstOrDefault(t =>
-                            t.Text == _rep.TableReplacementStartTag + trCol0.Value[0] + _rep.TableReplacementEndTag &&
+                            t.Text == _rep.TableReplacementStartTag + trCol0.Key + _rep.TableReplacementEndTag &&
                             t.Ancestors<DocumentFormat.OpenXml.Wordprocessing.TableCell>().Any());
                     if (textElement != null)
                     {
+                        var newTableRows = new List<TableRow>();
                         var tableRow = textElement.Ancestors<TableRow>().First();
-                        TableRow tableRowCopy = (TableRow) tableRow.CloneNode(true);
 
 
                         for (var j = 0; j < trCol0.Value.Length; j++) //Lets create row by row and replace placeholders
                         {
+                            newTableRows.Add((TableRow)tableRow.CloneNode(true));
+                            var tableRowCopy = newTableRows[newTableRows.Count - 1];
 
                             foreach (var text in tableRow.Descendants<Text>()
-                            ) //Cycle through the texts of the row to replace
+                            ) //Cycle through the cells of the row to replace from the Dictionary value ( string array)
                             {
                                 for (var index = 0;
                                     index < trDict.Count;
@@ -179,6 +197,8 @@ namespace Website.BackgroundWorkers
                                                 item.Value[j]);
 
                                         }
+
+                                        break;
                                     }
                                 }
 
@@ -186,9 +206,12 @@ namespace Website.BackgroundWorkers
 
                             }
 
-                            tableRow.Parent.InsertAfter(tableRowCopy, tableRow);
-                            tableRow = tableRowCopy;
-                            tableRowCopy = new TableRow();
+                            if (j < trCol0.Value.Length - 1)
+                            {
+                                tableRow.Parent.InsertAfter(tableRowCopy, tableRow);
+                                tableRow = tableRowCopy;
+                            }
+                            
                         }
 
                     }
@@ -219,8 +242,11 @@ namespace Website.BackgroundWorkers
 
 
 
-        public void ReplaceImages()
+        public MemoryStream ReplaceImages()
         {
+            if (_rep.ImageReplacements.Count == 0 || _rep.ImageReplacements == null)
+                return null;
+
             using (WordprocessingDocument doc =
                 WordprocessingDocument.Open(_docxMs, true))
             {
@@ -249,6 +275,7 @@ namespace Website.BackgroundWorkers
                 }
             }
             _docxMs.Position = 0;
+            return _docxMs;
 
         }
 
@@ -326,79 +353,6 @@ namespace Website.BackgroundWorkers
                     EditId = "50D07946"
                 });
             return element;
-        }
-
-        private Drawing GetImageElement2(WordprocessingDocument wordDoc, string relationshipId)
-        {
-            
-            // Define the reference of the image.
-            var element =
-                 new Drawing(
-                     new DW.Inline(
-                         new DW.Extent() { Cx = 990000L, Cy = 792000L },
-                         new DW.EffectExtent()
-                         {
-                             LeftEdge = 0L,
-                             TopEdge = 0L,
-                             RightEdge = 0L,
-                             BottomEdge = 0L
-                         },
-                         new DW.DocProperties()
-                         {
-                             Id = (UInt32Value)1U,
-                             Name = "Picture " + _imageCounter
-                         },
-                         new DW.NonVisualGraphicFrameDrawingProperties(
-                             new A.GraphicFrameLocks() { NoChangeAspect = true }),
-                         new A.Graphic(
-                             new A.GraphicData(
-                                 new PIC.Picture(
-                                     new PIC.NonVisualPictureProperties(
-                                         new PIC.NonVisualDrawingProperties()
-                                         {
-                                             Id = (UInt32Value)0U,
-                                             Name = "New Bitmap Image" + _imageCounter
-                                         },
-                                         new PIC.NonVisualPictureDrawingProperties()),
-                                     new PIC.BlipFill(
-                                         new A.Blip(
-                                             new A.BlipExtensionList(
-                                                 new A.BlipExtension()
-                                                 {
-                                                     Uri =
-                                                        "{28A0092B-C50C-407E-A947-70E740481C1C}"
-                                                 })
-                                         )
-                                         {
-                                             Embed = relationshipId,
-                                             CompressionState =
-                                             A.BlipCompressionValues.Print
-                                         },
-                                         new A.Stretch(
-                                             new A.FillRectangle())),
-                                     new PIC.ShapeProperties(
-                                         new A.Transform2D(
-                                             new A.Offset() { X = 0L, Y = 0L },
-                                             new A.Extents() { Cx = 990000L, Cy = 792000L }),
-                                         new A.PresetGeometry(
-                                             new A.AdjustValueList()
-                                         )
-                                         { Preset = A.ShapeTypeValues.Rectangle }))
-                             )
-                             { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
-                     )
-                     {
-                         DistanceFromTop = (UInt32Value)0U,
-                         DistanceFromBottom = (UInt32Value)0U,
-                         DistanceFromLeft = (UInt32Value)0U,
-                         DistanceFromRight = (UInt32Value)0U,
-                         EditId = "50D07946"
-                     });
-
-            return element;
-            // Append the reference to body, the element should be in a Run.
-            //wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
-
         }
 
         private static void CleanMarkup(WordprocessingDocument doc)

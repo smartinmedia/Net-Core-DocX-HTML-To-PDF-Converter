@@ -16,7 +16,7 @@ namespace DocXToPdfConverter
             string xslLocation = Path.Combine(executableLocation, "Test-Template.docx");
 
             //Prepare texts, which you want to insert into the custom fields in the template (remember
-            //to use start and stop tags and store in a Dictionary.
+            //to use start and stop tags.
             //Note that line breaks can be inserted as what you define them in ReplacementDictionaries.NewLineTag (here we use <br/>).
 
             var myDictionary = new ReplacementDictionaries();
@@ -33,14 +33,16 @@ namespace DocXToPdfConverter
             {
                 {"Name", "Mr. Miller" },
                 {"Street", "89 Brook St" },
-                {"City", "Brookline MA 02115" },
+                {"City", "Brookline MA 02115<br/>USA" },
                 {"InvoiceNo", "5" },
                 {"Total", "U$ 4,500" }
             };
 
 
 
-            //You should be able to also use other OpenXML tags in your strings
+            //Table ROW replacements are a little bit more complicated: With them you can
+            //fill out only one table row in a table and it will add as many rows as you 
+            //need, depending on the string Array.
             myDictionary.TableReplacements = new List<Dictionary<string, string[]>>
             {
                 
@@ -77,7 +79,7 @@ namespace DocXToPdfConverter
             };
 
             var doc = new DocXHandler(xslLocation, myDictionary);
-            var docxStream = doc.ReplaceTextsAndImages();
+            var docxStream = doc.ReplaceAll();
 
             StreamHandler.WriteMemoryStreamToDisk(docxStream, "F:\\vmc\\out.docx");
         }
