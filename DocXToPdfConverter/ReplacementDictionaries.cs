@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 
 
 namespace DocXToPdfConverter
@@ -14,6 +15,17 @@ namespace DocXToPdfConverter
         public Dictionary<string,string> TextReplacements { get; set; }
 
         /*
+         * For tables it works that way:
+         * 1. If you have a table in the word document, create 1 row with a different Dictionary keys
+         * Then e. g. you want to have 10 rows in the end, you add 10 values to each array of the Dictionary value
+         *
+         */
+        public string TableReplacementStartTag { get; set; }
+        public string TableReplacementEndTag { get; set; }
+        public List<Dictionary<string, string[]>> TableReplacements { get; set; }
+
+
+        /*
          * Important: The MemoryStream may carry an image.
          * Allowed file types: JPEG/JPG, BMP, TIFF, GIF, PNG
          */
@@ -23,6 +35,6 @@ namespace DocXToPdfConverter
         public string ImageReplacementStartTag { get; set; }
         public string ImageReplacementEndTag { get; set; }
 
-        public Dictionary<string, MemoryStream> JpegReplacements { get; set; }
+        public Dictionary<string, MemoryStream> ImageReplacements { get; set; }
     }
 }
