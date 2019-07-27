@@ -44,7 +44,7 @@ namespace DocXToPdfConverter
             }
             
             ProcessStartInfo procStartInfo =
-                new ProcessStartInfo(libreOfficePath, string.Format("--convert-to pdf --nologo {0}", docxFile));
+                new ProcessStartInfo(libreOfficePath, String.Format("--convert-to pdf --nologo --headless --outdir {0} {1}", System.IO.Path.GetDirectoryName(pdfFile), docxFile));
             procStartInfo.RedirectStandardOutput = true;
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;
@@ -58,6 +58,10 @@ namespace DocXToPdfConverter
             if (process.ExitCode != 0)
             {
                 throw new LibreOfficeFailedException(process.ExitCode);
+            }
+            else
+            {
+                System.IO.File.Move(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(pdfFile), System.IO.Path.GetFileNameWithoutExtension(docxFile)+".pdf"), pdfFile);
             }
 
         }
