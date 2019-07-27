@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "c966c524287fa462f2498c80342386640d6c8ac9"
+    "signature": "9dcdc07ddbbe5e3345c1c1535c5df87866df6b70"
   },
   "compilationOptions": {},
   "targets": {
@@ -9,7 +9,6 @@
       "DocXToPdfConverter/1.0.0": {
         "dependencies": {
           "DocumentFormat.OpenXml": "2.10.0-beta0002",
-          "OpenXmlPowerTools": "4.5.3.2",
           "System.Drawing.Common": "4.5.1"
         },
         "runtime": {
@@ -40,14 +39,6 @@
             "assetType": "runtime",
             "assemblyVersion": "4.0.0.0",
             "fileVersion": "4.6.26515.6"
-          }
-        }
-      },
-      "OpenXmlPowerTools/4.5.3.2": {
-        "runtime": {
-          "lib/net45/OpenXmlPowerTools.dll": {
-            "assemblyVersion": "4.5.3.0",
-            "fileVersion": "4.5.3.0"
           }
         }
       },
@@ -105,13 +96,6 @@
       "sha512": "sha512-LuI1oG+24TUj1ZRQQjM5Ew73BKnZE5NZ/7eAdh1o8ST5dPhUnJvIkiIn2re3MwnkRy6ELRnvEbBxHP8uALKhJw==",
       "path": "microsoft.win32.systemevents/4.5.0",
       "hashPath": "microsoft.win32.systemevents.4.5.0.nupkg.sha512"
-    },
-    "OpenXmlPowerTools/4.5.3.2": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-F0HxQxh5+ZL5lOhkddrIozQj2ml0Zzwp25P5teEDmT8iyj++ZpeXf7c6aYqvHH1A9uULyayKVUUYhLi7+55pFw==",
-      "path": "openxmlpowertools/4.5.3.2",
-      "hashPath": "openxmlpowertools.4.5.3.2.nupkg.sha512"
     },
     "System.Drawing.Common/4.5.1": {
       "type": "package",

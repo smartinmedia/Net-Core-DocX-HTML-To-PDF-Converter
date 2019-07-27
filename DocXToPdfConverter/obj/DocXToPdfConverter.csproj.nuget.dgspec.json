@@ -50,10 +50,6 @@
               "version": "[2.1.0, )",
               "autoReferenced": true
             },
-            "OpenXmlPowerTools": {
-              "target": "Package",
-              "version": "[4.5.3.2, )"
-            },
             "System.Drawing.Common": {
               "target": "Package",
               "version": "[4.5.1, )"

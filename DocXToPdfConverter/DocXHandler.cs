@@ -16,7 +16,7 @@ using Table = DocumentFormat.OpenXml.Wordprocessing.Table;
 using TableRow = DocumentFormat.OpenXml.Wordprocessing.TableRow;
 
 
-namespace Website.BackgroundWorkers
+namespace DocXToPdfConverter
 {
     public class DocXHandler
 
@@ -30,6 +30,12 @@ namespace Website.BackgroundWorkers
             _docxMs = StreamHandler.GetFileAsMemoryStream(docXTemplateFilename);
             _rep = rep;
             
+        }
+
+
+        public MemoryStream CleanDocument()
+        {
+            return DocxCleaner.Clean(_docxMs);
         }
 
         public MemoryStream ReplaceAll()

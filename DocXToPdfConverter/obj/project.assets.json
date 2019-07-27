@@ -238,15 +238,6 @@
           "build/netstandard2.0/NETStandard.Library.targets": {}
         }
       },
-      "OpenXmlPowerTools/4.5.3.2": {
-        "type": "package",
-        "compile": {
-          "lib/net45/OpenXmlPowerTools.dll": {}
-        },
-        "runtime": {
-          "lib/net45/OpenXmlPowerTools.dll": {}
-        }
-      },
       "System.Drawing.Common/4.5.1": {
         "type": "package",
         "dependencies": {
@@ -794,18 +785,6 @@
         "netstandard.library.nuspec"
       ]
     },
-    "OpenXmlPowerTools/4.5.3.2": {
-      "sha512": "F0HxQxh5+ZL5lOhkddrIozQj2ml0Zzwp25P5teEDmT8iyj++ZpeXf7c6aYqvHH1A9uULyayKVUUYhLi7+55pFw==",
-      "type": "package",
-      "path": "openxmlpowertools/4.5.3.2",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net45/OpenXmlPowerTools.dll",
-        "openxmlpowertools.4.5.3.2.nupkg.sha512",
-        "openxmlpowertools.nuspec"
-      ]
-    },
     "System.Drawing.Common/4.5.1": {
       "sha512": "GiyeGi/v4xYDz1vCNFwFvhz9k1XddOG7VD3jxRqzRBCbTHji+s3HxxbxtoymuK4OadEpgotI8zQ5+GEEH9sUEQ==",
       "type": "package",
@@ -868,7 +847,6 @@
     ".NETCoreApp,Version=v2.1": [
       "DocumentFormat.OpenXml >= 2.10.0-beta0002",
       "Microsoft.NETCore.App >= 2.1.0",
-      "OpenXmlPowerTools >= 4.5.3.2",
       "System.Drawing.Common >= 4.5.1"
     ]
   },
@@ -922,10 +900,6 @@
             "version": "[2.1.0, )",
             "autoReferenced": true
           },
-          "OpenXmlPowerTools": {
-            "target": "Package",
-            "version": "[4.5.3.2, )"
-          },
           "System.Drawing.Common": {
             "target": "Package",
             "version": "[4.5.1, )"
@@ -938,17 +912,5 @@
         "warn": true
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'OpenXmlPowerTools 4.5.3.2' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.1'. This package may not be fully compatible with your project.",
-      "libraryId": "OpenXmlPowerTools",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.1"
-      ]
-    }
-  ]
+  }
 }

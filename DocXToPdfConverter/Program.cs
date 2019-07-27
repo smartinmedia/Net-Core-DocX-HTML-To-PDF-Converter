@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Website.BackgroundWorkers;
+using DocXToPdfConverter;
 
 namespace DocXToPdfConverter
 {
@@ -80,7 +80,7 @@ namespace DocXToPdfConverter
 
             var doc = new DocXHandler(xslLocation, myDictionary);
             var docxStream = doc.ReplaceAll();
-
+            //var docxStream = doc.CleanDocument();
             StreamHandler.WriteMemoryStreamToDisk(docxStream, "F:\\vmc\\out.docx");
         }
     }

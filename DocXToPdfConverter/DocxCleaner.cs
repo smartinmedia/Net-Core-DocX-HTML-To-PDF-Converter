@@ -2,14 +2,43 @@
 using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 
 namespace DocXToPdfConverter
 {
+    /*
+     *
+     *  D  E  P  R  A  C  A  T  E  D
+     *
+     *
+     *
+     */
+
+
     public static class DocxCleaner
     {
 
-        public static void Clean(MemoryStream ms)
+        public static MemoryStream Clean2(MemoryStream _docxMs)
+        {
+            using (WordprocessingDocument doc =
+                WordprocessingDocument.Open(_docxMs, true))
+            {
+
+                var document = doc.MainDocumentPart.Document;
+
+                foreach (var text in document.Descendants<Text>()) // <<< Here
+                {
+
+                }
+            }
+
+            return _docxMs;
+        }
+
+
+
+        public static MemoryStream Clean(MemoryStream ms)
         {
             using (WordprocessingDocument doc =
                 WordprocessingDocument.Open(ms, true))
@@ -33,6 +62,8 @@ namespace DocXToPdfConverter
                     f.SaveXDocument();
                 }
             }
+
+            return ms;
         }
 
         public static XDocument GetXDocument(this OpenXmlPart part)
@@ -73,6 +104,9 @@ namespace DocXToPdfConverter
             doc.Descendants().Attributes(w + "rsidR").Remove();
             doc.Descendants().Attributes(w + "rsidDel").Remove();
             doc.Descendants().Attributes(w + "rsidP").Remove();
+            doc.Descendants().Attributes(w + "lang").Remove();
+
+            doc.Descendants(w + "lang").Remove();
             doc.Descendants(w + "rsid").Remove();
         }
 

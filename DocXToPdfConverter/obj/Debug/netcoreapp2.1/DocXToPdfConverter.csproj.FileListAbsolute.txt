@@ -5,7 +5,6 @@ F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\bin\Debug\netco
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\obj\Debug\netcoreapp2.1\DocXToPdfConverter.csproj.CoreCompileInputs.cache
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\obj\Debug\netcoreapp2.1\DocXToPdfConverter.AssemblyInfoInputs.cache
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\obj\Debug\netcoreapp2.1\DocXToPdfConverter.AssemblyInfo.cs
-F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\obj\Debug\netcoreapp2.1\DocXToPdfConverter.csprojAssemblyReference.cache
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\bin\Debug\netcoreapp2.1\ProductImage.jpg
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\bin\Debug\netcoreapp2.1\QRCode.PNG
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\DocXToPdfConverter\bin\Debug\netcoreapp2.1\Test-Template.docx
