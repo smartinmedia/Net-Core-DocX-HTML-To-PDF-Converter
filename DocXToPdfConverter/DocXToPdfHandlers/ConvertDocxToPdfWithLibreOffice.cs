@@ -35,7 +35,11 @@ namespace DocXToPdfConverter
 
 
 
-        //libreOfficePath for Windows: e. g. "C:\\program\\soffice.exe"
+        //libreOfficePath for Windows: e. g. "C:\\program\\soffice.exe
+
+
+        //With Portable Apps it is here: C:\PortableApps\LibreOfficePortable\App\libreoffice\program\soffice.exe
+
         public static void ConvertToPdf(string docxFile, string pdfFile, string libreOfficePath)
         {
             if (libreOfficePath == "")

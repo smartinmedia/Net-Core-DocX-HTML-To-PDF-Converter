@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using DocXToPdfConverter;
 
-namespace DocXToPdfConverter
+namespace ExampleApplication
 {
     class Program
     {
@@ -35,7 +35,8 @@ namespace DocXToPdfConverter
                 {"Street", "89 Brook St" },
                 {"City", "Brookline MA 02115<br/>USA" },
                 {"InvoiceNo", "5" },
-                {"Total", "U$ 4,500" }
+                {"Total", "U$ 4,500" },
+                {"Date", "28 Jul 2019" }
             };
 
 

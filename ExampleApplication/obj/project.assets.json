@@ -1148,6 +1148,21 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XPath.XmlDocument.dll": {}
         }
+      },
+      "DocXToPdfConverter/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.1",
+        "dependencies": {
+          "DocumentFormat.OpenXml": "2.10.0-beta0002",
+          "HtmlAgilityPack": "1.11.12",
+          "System.Drawing.Common": "4.5.1"
+        },
+        "compile": {
+          "bin/placeholder/DocXToPdfConverter.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DocXToPdfConverter.dll": {}
+        }
       }
     }
   },
@@ -4105,14 +4120,17 @@
         "system.xml.xpath.xmldocument.4.3.0.nupkg.sha512",
         "system.xml.xpath.xmldocument.nuspec"
       ]
+    },
+    "DocXToPdfConverter/1.0.0": {
+      "type": "project",
+      "path": "../DocXToPdfConverter/DocXToPdfConverter.csproj",
+      "msbuildProject": "../DocXToPdfConverter/DocXToPdfConverter.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.1": [
-      "DocumentFormat.OpenXml >= 2.10.0-beta0002",
-      "HtmlAgilityPack >= 1.11.12",
-      "Microsoft.NETCore.App >= 2.1.0",
-      "System.Drawing.Common >= 4.5.1"
+      "DocXToPdfConverter >= 1.0.0",
+      "Microsoft.NETCore.App >= 2.1.0"
     ]
   },
   "packageFolders": {
@@ -4122,11 +4140,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj",
-      "projectName": "DocXToPdfConverter",
-      "projectPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj",
+      "projectUniqueName": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\ExampleApplication\\ExampleApplication.csproj",
+      "projectName": "ExampleApplication",
+      "projectPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\ExampleApplication\\ExampleApplication.csproj",
       "packagesPath": "C:\\Users\\ThinkPad User\\.nuget\\packages\\",
-      "outputPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\obj\\",
+      "outputPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\ExampleApplication\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -4144,7 +4162,11 @@
       },
       "frameworks": {
         "netcoreapp2.1": {
-          "projectReferences": {}
+          "projectReferences": {
+            "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj": {
+              "projectPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -4156,23 +4178,10 @@
     "frameworks": {
       "netcoreapp2.1": {
         "dependencies": {
-          "DocumentFormat.OpenXml": {
-            "target": "Package",
-            "version": "[2.10.0-beta0002, )"
-          },
-          "HtmlAgilityPack": {
-            "target": "Package",
-            "version": "[1.11.12, )"
-          },
           "Microsoft.NETCore.App": {
-            "suppressParent": "All",
             "target": "Package",
             "version": "[2.1.0, )",
             "autoReferenced": true
-          },
-          "System.Drawing.Common": {
-            "target": "Package",
-            "version": "[4.5.1, )"
           }
         },
         "imports": [

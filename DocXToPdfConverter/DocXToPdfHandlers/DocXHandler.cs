@@ -33,11 +33,6 @@ namespace DocXToPdfConverter
         }
 
 
-        public MemoryStream CleanDocument()
-        {
-            return DocxCleaner.Clean(_docxMs);
-        }
-
         public MemoryStream ReplaceAll()
         {
             if (_rep.TextReplacements.Count > 0)

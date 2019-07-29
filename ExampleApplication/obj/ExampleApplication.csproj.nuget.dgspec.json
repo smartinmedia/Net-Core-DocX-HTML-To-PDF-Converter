@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj": {}
+    "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\ExampleApplication\\ExampleApplication.csproj": {}
   },
   "projects": {
     "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj": {
@@ -58,6 +58,61 @@
             "System.Drawing.Common": {
               "target": "Package",
               "version": "[4.5.1, )"
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    },
+    "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\ExampleApplication\\ExampleApplication.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\ExampleApplication\\ExampleApplication.csproj",
+        "projectName": "ExampleApplication",
+        "projectPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\ExampleApplication\\ExampleApplication.csproj",
+        "packagesPath": "C:\\Users\\ThinkPad User\\.nuget\\packages\\",
+        "outputPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\ExampleApplication\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\ThinkPad User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.1": {
+            "projectReferences": {
+              "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj": {
+                "projectPath": "F:\\___PROGRAMMING_SOURCETREE\\DocXToPdfConvter\\DocXToPdfConverter\\DocXToPdfConverter.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.1": {
+          "dependencies": {
+            "Microsoft.NETCore.App": {
+              "target": "Package",
+              "version": "[2.1.0, )",
+              "autoReferenced": true
             }
           },
           "imports": [
