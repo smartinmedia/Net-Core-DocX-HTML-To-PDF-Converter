@@ -1,4 +1,3 @@
-F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\bin\Debug\netcoreapp2.1\document.xml
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\bin\Debug\netcoreapp2.1\ProductImage.jpg
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\bin\Debug\netcoreapp2.1\QRCode.PNG
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\bin\Debug\netcoreapp2.1\Test-Template.docx

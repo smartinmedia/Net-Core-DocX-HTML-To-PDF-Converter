@@ -8,10 +8,15 @@ namespace DocXToPdfConverter
     
     public class ReplacementDictionaries
     {
+        //NewLineTags are important only for .docx as input. If you use .html as input, then just use "<br/>"
         public string NewLineTag { get; set; }
+
+
+
         //Start and End Tags can e. g. be both "<###>"
         public string TextReplacementStartTag { get; set; }
         public string TextReplacementEndTag { get; set; }
+
         public Dictionary<string,string> TextReplacements { get; set; }
 
         /*

@@ -33,6 +33,10 @@ namespace DocXToPdfConverter
         //string docxSource = filename with path
         public void GenerateReportFromDocxToDocX(string docxSource, string docxTarget, ReplacementDictionaries rep)
         {
+            if (!File.Exists(docxSource))
+            {
+                return;
+            }
             var docx = new DocXHandler(docxSource, rep);
             var ms = docx.ReplaceAll();
             StreamHandler.WriteMemoryStreamToDisk(ms, docxTarget);
@@ -41,17 +45,25 @@ namespace DocXToPdfConverter
         ////string docxSource = filename with path
         public void GenerateReportFromDocxToPdf(string docxSource, string pdfTarget, ReplacementDictionaries rep)
         {
+            if (!File.Exists(docxSource))
+            {
+                return;
+            }
             var docx = new DocXHandler(docxSource, rep);
             var ms = docx.ReplaceAll();
-            var tmpFile = Path.GetFileNameWithoutExtension(pdfTarget) + ".tmp";
+            var tmpFile = Path.GetFileNameWithoutExtension(pdfTarget) + "_tmp.docx";
             StreamHandler.WriteMemoryStreamToDisk(ms, tmpFile);
-            ConvertDocxToPdfWithLibreOffice.ConvertToPdf(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
+            ConvertWithLibreOffice.Convert(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
             File.Delete(tmpFile);
         }
 
         //Please note that this is not a target file, but a target directory!
         public void GenerateReportFromDocxToHtml(string docxSource, string htmlTargetDirectory, ReplacementDictionaries rep)
         {
+            if (!File.Exists(docxSource))
+            {
+                return;
+            }
             var docx = new DocXHandler(docxSource, rep);
             var ms = docx.ReplaceAll();
             var tmpFile = Path.GetFileNameWithoutExtension(docxSource);
@@ -62,10 +74,28 @@ namespace DocXToPdfConverter
 
         }
 
+
+        public void GenerateReportFromHtmlToHtml(string htmlSource, string htmlTarget, ReplacementDictionaries rep)
+        {
+            if (!File.Exists(htmlSource))
+            {
+                return;
+            }
+            string html = File.ReadAllText(htmlSource);
+            html = HtmlHandler.ReplaceAll(html, rep);
+            File.WriteAllText(htmlTarget, html);
+        }
+
+
         //This requires the HtmlAgilityPack
         //string htmlSource = filename to a *.html/*.htm file with path
         public void GenerateReportFromHtmlToDocx(string htmlSource, string pdfTarget, ReplacementDictionaries rep)
         {
+            if (!File.Exists(htmlSource))
+            {
+                return;
+            }
+            /*
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(htmlSource);
             htmlDoc.OptionFixNestedTags = true;
@@ -73,7 +103,8 @@ namespace DocXToPdfConverter
             htmlDoc.OptionCheckSyntax = true;
             HtmlNode bodyNode = htmlDoc.DocumentNode;
             htmlSource = bodyNode.WriteTo();
-
+            */
+            PtHtmlConvertToDocx.ConvertToDocx(htmlSource, Path.GetDirectoryName(pdfTarget));
             
         }
 
@@ -82,7 +113,14 @@ namespace DocXToPdfConverter
         //string htmlSource = filename to a *.html/*.htm file with path
         public void GenerateReportFromHtmlToPdf(string htmlSource, string pdfTarget, ReplacementDictionaries rep)
         {
+            if (!File.Exists(htmlSource))
+            {
+                return;
+                
+            }
+            string html = File.ReadAllText(htmlSource);
 
+            ConvertWithLibreOffice.Convert(htmlSource, pdfTarget, _locationOfLibreOfficeSoffice);
         }
 
         /*******************************************************************************************#

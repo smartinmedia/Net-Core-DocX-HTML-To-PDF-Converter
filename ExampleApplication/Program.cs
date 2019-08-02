@@ -79,10 +79,18 @@ namespace ExampleApplication
                 {"ProductImage", productImage }
             };
 
-            var doc = new DocXHandler(xslLocation, myDictionary);
-            var docxStream = doc.ReplaceAll();
+            //var doc = new DocXHandler(xslLocation, myDictionary);
+            //var docxStream = doc.ReplaceAll();
             //var docxStream = doc.CleanDocument();
-            StreamHandler.WriteMemoryStreamToDisk(docxStream, "F:\\vmc\\out.docx");
+            //StreamHandler.WriteMemoryStreamToDisk(docxStream, "F:\\vmc\\out.docx");
+            var test = new ReportGenerator(@"F:\PortableApps\LibreOfficePortable\App\libreoffice\program\soffice.exe");
+            //test.GenerateReportFromHtmlToPdf("f:\\vmc\\simhtml.htm", "f:\\vmc\\simhtml.pdf", myDictionary);
+            //test.GenerateReportFromDocxToDocX("Test-Template.docx", "F:\\vmc\\template.docx", myDictionary);
+            
+            test.GenerateReportFromHtmlToHtml();
+            
+
+            //test.GenerateReportFromDocxToPdf("Test-Template.docx", "F:\\vmc\\template.pdf", myDictionary);
         }
     }
 }

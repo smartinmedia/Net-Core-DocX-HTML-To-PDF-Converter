@@ -48,5 +48,44 @@ namespace DocXToPdfConverter
 
             return ImagePartType.Jpeg;
         }
+
+        public static string GetImageTypeFromMemStream(MemoryStream stream)
+        {
+            stream.Position = 0;
+            var image = Image.FromStream(stream);
+            stream.Position = 0;
+
+
+            if (ImageFormat.Jpeg.Equals(image.RawFormat))
+            {
+                return "jpeg";
+            }
+            else if (ImageFormat.Png.Equals(image.RawFormat))
+            {
+                return "png";
+            }
+            else if (ImageFormat.Gif.Equals(image.RawFormat))
+            {
+                return "gif";
+            }
+            else if (ImageFormat.Bmp.Equals(image.RawFormat))
+            {
+                return "bmp";
+            }
+            else if (ImageFormat.Tiff.Equals(image.RawFormat))
+            {
+                return "tiff";
+            }
+
+            return "";
+        }
+
+        public static string GetBase64FromMemStream(MemoryStream stream)
+        {
+            byte[] imageBytes = stream.ToArray();
+
+            // Convert byte[] to Base64 String
+            return Convert.ToBase64String(imageBytes);
+        }
     }
 }

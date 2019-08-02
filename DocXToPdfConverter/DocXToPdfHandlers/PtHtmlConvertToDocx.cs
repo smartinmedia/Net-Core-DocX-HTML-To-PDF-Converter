@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using HtmlAgilityPack;
 using OpenXmlPowerTools;
 
 namespace DocXToPdfConverter.DocXToPdfHandlers
@@ -20,18 +21,51 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
     public class PtHtmlConvertToDocx
     {
 
-
-        private static void ConvertToDocx(string file, string destinationDir)
+        private static void ConvertToDocx2(string file, string destinationDir)
         {
-            bool s_ProduceAnnotatedHtml = true;
+            var sourceHtmlFi = new FileInfo(file);
+            var sourceImageDi = new DirectoryInfo(destinationDir);
+            string htmlFileExtension = "";
+            if (sourceHtmlFi.Name.EndsWith(".html")) htmlFileExtension = ".html";
+            else if (sourceHtmlFi.Name.EndsWith(".htm")) htmlFileExtension = ".htm";
+            var destDocxFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(htmlFileExtension, "-ConvertedByHtmlToWml.docx")));
+
+            XElement html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceHtmlFi);
+
+            string usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+
+            HtmlToWmlConverterSettings settings = HtmlToWmlConverter.GetDefaultSettings();
+            // image references in HTML files contain the path to the subdir that contains the images, so base URI is the name of the directory
+            // that contains the HTML files
+            settings.BaseUriForImages = sourceHtmlFi.DirectoryName;
+
+            WmlDocument doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings);
+            doc.SaveAs(destDocxFi.FullName);
+        }
+
+
+
+
+
+
+
+
+
+
+        public static void ConvertToDocx(string file, string destinationDir)
+        {
+            bool s_ProduceAnnotatedHtml = true; 
 
             var sourceHtmlFi = new FileInfo(file);
             Console.WriteLine("Converting " + sourceHtmlFi.Name);
             var sourceImageDi = new DirectoryInfo(destinationDir);
 
-            var destCssFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
-            var destDocxFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")));
-            var annotatedHtmlFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
+            string htmlFileExtension = "";
+            if (sourceHtmlFi.Name.EndsWith(".html")) htmlFileExtension = ".html";
+                else if (sourceHtmlFi.Name.EndsWith(".htm")) htmlFileExtension = ".htm";
+            var destCssFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(htmlFileExtension, "-2.css")));
+            var destDocxFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(htmlFileExtension, "-3-ConvertedByHtmlToWml.docx")));
+            var annotatedHtmlFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(htmlFileExtension, "-4-Annotated.txt")));
 
             XElement html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceHtmlFi);
 
@@ -57,33 +91,28 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 {
                     html = XElement.Parse(htmlString);
                 }
-#if USE_HTMLAGILITYPACK
-            catch (XmlException)
-            {
-                HtmlDocument hdoc = new HtmlDocument();
-                hdoc.Load(sourceHtmlFi.FullName, Encoding.Default);
-                hdoc.OptionOutputAsXml = true;
-                hdoc.Save(sourceHtmlFi.FullName, Encoding.Default);
-                StringBuilder sb = new StringBuilder(File.ReadAllText(sourceHtmlFi.FullName, Encoding.Default));
-                sb.Replace("&amp;", "&");
-                sb.Replace("&nbsp;", "\xA0");
-                sb.Replace("&quot;", "\"");
-                sb.Replace("&lt;", "~lt;");
-                sb.Replace("&gt;", "~gt;");
-                sb.Replace("&#", "~#");
-                sb.Replace("&", "&amp;");
-                sb.Replace("~lt;", "&lt;");
-                sb.Replace("~gt;", "&gt;");
-                sb.Replace("~#", "&#");
-                File.WriteAllText(sourceHtmlFi.FullName, sb.ToString(), Encoding.Default);
-                html = XElement.Parse(sb.ToString());
-            }
-#else
-                catch (XmlException e)
+
+                catch (XmlException)
                 {
-                    throw e;
+                    HtmlDocument hdoc = new HtmlDocument();
+                    hdoc.Load(sourceHtmlFi.FullName, Encoding.Default);
+                    hdoc.OptionOutputAsXml = true;
+                    hdoc.Save(sourceHtmlFi.FullName, Encoding.Default);
+                    StringBuilder sb = new StringBuilder(File.ReadAllText(sourceHtmlFi.FullName, Encoding.Default));
+                    sb.Replace("&amp;", "&");
+                    sb.Replace("&nbsp;", "\xA0");
+                    //sb.Replace("&quot;", "\"");
+                    sb.Replace("&lt;", "~lt;");
+                    sb.Replace("&gt;", "~gt;");
+                    sb.Replace("&#", "~#");
+                    sb.Replace("&", "&amp;");
+                    sb.Replace("~lt;", "&lt;");
+                    sb.Replace("~gt;", "&gt;");
+                    sb.Replace("~#", "&#");
+                    File.WriteAllText(sourceHtmlFi.FullName, sb.ToString(), Encoding.Default);
+                    html = XElement.Parse(sb.ToString());
                 }
-#endif
+
                 // HtmlToWmlConverter expects the HTML elements to be in no namespace, so convert all elements to no namespace.
                 html = (XElement)ConvertToNoNamespace(html);
                 return html;
