@@ -22,10 +22,10 @@ namespace DocXToPdfConverter
 
     {
         private MemoryStream _docxMs;
-        private ReplacementDictionaries _rep;
+        private Placeholders _rep;
         private int _imageCounter;
 
-        public DocXHandler(string docXTemplateFilename, ReplacementDictionaries rep)
+        public DocXHandler(string docXTemplateFilename, Placeholders rep)
         {
             _docxMs = StreamHandler.GetFileAsMemoryStream(docXTemplateFilename);
             _rep = rep;
@@ -35,16 +35,16 @@ namespace DocXToPdfConverter
 
         public MemoryStream ReplaceAll()
         {
-            if (_rep.TextReplacements.Count > 0)
+            if (_rep.TextPlaceholders.Count > 0)
             {
                 ReplaceTexts();
             }
 
-            if (_rep.TableReplacements.Count > 0 && _rep.TableReplacements.First().Count > 0)
+            if (_rep.TablePlaceholders.Count > 0 && _rep.TablePlaceholders.First().Count > 0)
             {
                 ReplaceTableRows();
             }
-            if (_rep.ImageReplacements.Count > 0)
+            if (_rep.ImagePlaceholders.Count > 0)
             { 
                 ReplaceImages();
             }
@@ -56,7 +56,7 @@ namespace DocXToPdfConverter
 
         public MemoryStream ReplaceTexts()
         {
-            if (_rep.TextReplacements.Count == 0 || _rep.TextReplacements == null)
+            if (_rep.TextPlaceholders.Count == 0 || _rep.TextPlaceholders == null)
                 return null;
             using (WordprocessingDocument doc =
                 WordprocessingDocument.Open(_docxMs, true))
@@ -67,9 +67,9 @@ namespace DocXToPdfConverter
 
                 foreach (var text in document.Descendants<Text>()) // <<< Here
                 {
-                    foreach (var replace in _rep.TextReplacements)
+                    foreach (var replace in _rep.TextPlaceholders)
                     {
-                        if (text.Text.Contains(_rep.TextReplacementStartTag + replace.Key + _rep.TextReplacementEndTag))
+                        if (text.Text.Contains(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag))
                         {
                             if (replace.Value.Contains(_rep.NewLineTag))//If we have line breaks present
                             {
@@ -82,7 +82,7 @@ namespace DocXToPdfConverter
                                 {
                                     if (i == 0)//The text is only replaced with the first part of the replacement array
                                     {
-                                        text.Text = text.Text.Replace(_rep.TextReplacementStartTag + replace.Key + _rep.TextReplacementEndTag, repArray[i]);
+                                        text.Text = text.Text.Replace(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag, repArray[i]);
 
                                     }
                                     else
@@ -100,7 +100,7 @@ namespace DocXToPdfConverter
                             }
                             else
                             {
-                                text.Text = text.Text.Replace(_rep.TextReplacementStartTag + replace.Key + _rep.TextReplacementEndTag, replace.Value);
+                                text.Text = text.Text.Replace(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag, replace.Value);
 
                             }
                         }
@@ -117,7 +117,7 @@ namespace DocXToPdfConverter
 
         public MemoryStream ReplaceTableRows()
         {
-            if (_rep.TableReplacements.Count == 0 || _rep.TableReplacements == null)
+            if (_rep.TablePlaceholders.Count == 0 || _rep.TablePlaceholders == null)
                 return null;
 
             using (WordprocessingDocument doc =
@@ -128,14 +128,14 @@ namespace DocXToPdfConverter
 
                 var document = doc.MainDocumentPart.Document;
 
-                foreach (var trDict in _rep.TableReplacements) //Take a Row (one Dictionary) at a time
+                foreach (var trDict in _rep.TablePlaceholders) //Take a Row (one Dictionary) at a time
                 {
                     var trCol0 = trDict.First();
                     // Find the first text element matching the search string 
                     // where the text is inside a table cell --> this is the row we are searching for.
                     var textElement = document.Body.Descendants<Text>()
                         .FirstOrDefault(t =>
-                            t.Text == _rep.TableReplacementStartTag + trCol0.Key + _rep.TableReplacementEndTag &&
+                            t.Text == _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag &&
                             t.Ancestors<DocumentFormat.OpenXml.Wordprocessing.TableCell>().Any());
                     if (textElement != null)
                     {
@@ -157,8 +157,8 @@ namespace DocXToPdfConverter
                                 {
                                     var item = trDict.ElementAt(index);
 
-                                    if (text.Text.Contains(_rep.TableReplacementStartTag + item.Key +
-                                                           _rep.TableReplacementEndTag))
+                                    if (text.Text.Contains(_rep.TablePlaceholderStartTag + item.Key +
+                                                           _rep.TablePlaceholderEndTag))
                                     {
                                         if (item.Value[j].Contains(_rep.NewLineTag)) //If we have line breaks present
                                         {
@@ -174,8 +174,8 @@ namespace DocXToPdfConverter
                                                 ) //The text is only replaced with the first part of the replacement array
                                                 {
                                                     text.Text = text.Text.Replace(
-                                                        _rep.TableReplacementStartTag + item.Key +
-                                                        _rep.TableReplacementEndTag, repArray[i]);
+                                                        _rep.TablePlaceholderStartTag + item.Key +
+                                                        _rep.TablePlaceholderEndTag, repArray[i]);
 
                                                 }
                                                 else
@@ -194,7 +194,7 @@ namespace DocXToPdfConverter
                                         else
                                         {
                                             text.Text = text.Text.Replace(
-                                                _rep.TableReplacementStartTag + item.Key + _rep.TableReplacementEndTag,
+                                                _rep.TablePlaceholderStartTag + item.Key + _rep.TablePlaceholderEndTag,
                                                 item.Value[j]);
 
                                         }
@@ -245,7 +245,7 @@ namespace DocXToPdfConverter
 
         public MemoryStream ReplaceImages()
         {
-            if (_rep.ImageReplacements.Count == 0 || _rep.ImageReplacements == null)
+            if (_rep.ImagePlaceholders.Count == 0 || _rep.ImagePlaceholders == null)
                 return null;
 
             using (WordprocessingDocument doc =
@@ -257,14 +257,14 @@ namespace DocXToPdfConverter
 
                 foreach (var text in document.Descendants<Text>()) // <<< Here
                 {
-                    foreach (var replace in _rep.ImageReplacements)
+                    foreach (var replace in _rep.ImagePlaceholders)
                     {
                         _imageCounter++;
-                        if (text.Text.Contains(_rep.ImageReplacementStartTag + replace.Key + _rep.ImageReplacementEndTag))
+                        if (text.Text.Contains(_rep.ImagePlaceholderStartTag + replace.Key + _rep.ImagePlaceholderEndTag))
                         {
                             
                             text.Text = text.Text.Replace(
-                                _rep.ImageReplacementStartTag + replace.Key + _rep.ImageReplacementEndTag,
+                                _rep.ImagePlaceholderStartTag + replace.Key + _rep.ImagePlaceholderEndTag,
                                 "");
                             
                             AppendImageToElement(replace.Value, text, doc);

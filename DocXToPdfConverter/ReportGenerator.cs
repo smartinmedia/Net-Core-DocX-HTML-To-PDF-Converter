@@ -31,7 +31,7 @@ namespace DocXToPdfConverter
         }
 
         //string docxSource = filename with path
-        public void GenerateReportFromDocxToDocX(string docxSource, string docxTarget, ReplacementDictionaries rep)
+        public void GenerateReportFromDocxToDocX(string docxSource, string docxTarget, Placeholders rep)
         {
             if (!File.Exists(docxSource))
             {
@@ -43,7 +43,7 @@ namespace DocXToPdfConverter
         }
 
         ////string docxSource = filename with path
-        public void GenerateReportFromDocxToPdf(string docxSource, string pdfTarget, ReplacementDictionaries rep)
+        public void GenerateReportFromDocxToPdf(string docxSource, string pdfTarget, Placeholders rep)
         {
             if (!File.Exists(docxSource))
             {
@@ -58,7 +58,7 @@ namespace DocXToPdfConverter
         }
 
         //Please note that this is not a target file, but a target directory!
-        public void GenerateReportFromDocxToHtml(string docxSource, string htmlTargetDirectory, ReplacementDictionaries rep)
+        public void GenerateReportFromDocxToHtml(string docxSource, string htmlTargetDirectory, Placeholders rep)
         {
             if (!File.Exists(docxSource))
             {
@@ -75,7 +75,7 @@ namespace DocXToPdfConverter
         }
 
 
-        public void GenerateReportFromHtmlToHtml(string htmlSource, string htmlTarget, ReplacementDictionaries rep)
+        public void GenerateReportFromHtmlToHtml(string htmlSource, string htmlTarget, Placeholders rep)
         {
             if (!File.Exists(htmlSource))
             {
@@ -89,7 +89,7 @@ namespace DocXToPdfConverter
 
         //This requires the HtmlAgilityPack
         //string htmlSource = filename to a *.html/*.htm file with path
-        public void GenerateReportFromHtmlToDocx(string htmlSource, string pdfTarget, ReplacementDictionaries rep)
+        public void GenerateReportFromHtmlToDocx(string htmlSource, string pdfTarget, Placeholders rep)
         {
             if (!File.Exists(htmlSource))
             {
@@ -111,7 +111,7 @@ namespace DocXToPdfConverter
 
         //This requires the HtmlAgilityPack
         //string htmlSource = filename to a *.html/*.htm file with path
-        public void GenerateReportFromHtmlToPdf(string htmlSource, string pdfTarget, ReplacementDictionaries rep)
+        public void GenerateReportFromHtmlToPdf(string htmlSource, string pdfTarget, Placeholders rep)
         {
             if (!File.Exists(htmlSource))
             {

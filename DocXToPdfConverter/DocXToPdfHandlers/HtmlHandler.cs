@@ -8,29 +8,29 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 {
     class HtmlHandler
     {
-        public static string ReplaceAll(string html, ReplacementDictionaries _rep)
+        public static string ReplaceAll(string html, Placeholders _rep)
         {
 
-            foreach (var trDict in _rep.TextReplacements)
+            foreach (var trDict in _rep.TextPlaceholders)
             {
-                html = html.Replace(_rep.TextReplacementStartTag + trDict.Key + _rep.TextReplacementEndTag,
+                html = html.Replace(_rep.TextPlaceholderStartTag + trDict.Key + _rep.TextPlaceholderEndTag,
                     trDict.Value);
             }
 
-            foreach (var replace in _rep.ImageReplacements)
+            foreach (var replace in _rep.ImagePlaceholders)
             {
-                html = html.Replace(_rep.ImageReplacementStartTag + replace.Key + _rep.ImageReplacementEndTag,
+                html = html.Replace(_rep.ImagePlaceholderStartTag + replace.Key + _rep.ImagePlaceholderEndTag,
                     "<img src=\"data: image / " + ImageHandler.GetImageTypeFromMemStream(replace.Value) + "; base64," +
                     ImageHandler.GetBase64FromMemStream(replace.Value) + "\"/>");
             }
 
-            foreach (var trDict in _rep.TableReplacements) //Take a Row/Table (one Dictionary) at a time
+            foreach (var trDict in _rep.TablePlaceholders) //Take a Row/Table (one Dictionary) at a time
             {
 
                 var trCol0 = trDict.First(); //This is the first placeholder
                 // Find the first text element matching the search string - Then we will find the row -
                 // where the text (placeholder) is inside a table cell --> this is the row we are searching for.
-                var placeholder = _rep.TableReplacementStartTag + trCol0.Key + _rep.TableReplacementEndTag;
+                var placeholder = _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag;
                 var regex = new Regex(@"<tr.*?" + placeholder + ".*?</tr>");
                 var match = regex.Match(html);
                 string copiedRow = match.Value;
@@ -45,11 +45,11 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                         {
                             var item = trDict.ElementAt(index);
 
-                            if (html.Contains(_rep.TableReplacementStartTag + item.Key + _rep.TableReplacementEndTag))
+                            if (html.Contains(_rep.TablePlaceholderStartTag + item.Key + _rep.TablePlaceholderEndTag))
                             {
 
                                 html = html.Replace(
-                                    _rep.TableReplacementStartTag + item.Key + _rep.TableReplacementEndTag,
+                                    _rep.TablePlaceholderStartTag + item.Key + _rep.TablePlaceholderEndTag,
                                     item.Value[j]);
 
 
