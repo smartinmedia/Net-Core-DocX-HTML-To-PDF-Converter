@@ -10,25 +10,33 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
     {
         public static string ReplaceAll(string html, Placeholders _rep)
         {
-
+            /*
+             * Replace Texts
+             */
             foreach (var trDict in _rep.TextPlaceholders)
             {
                 html = html.Replace(_rep.TextPlaceholderStartTag + trDict.Key + _rep.TextPlaceholderEndTag,
                     trDict.Value);
             }
 
-            foreach (var replace in _rep.ImagePlaceholders)
+            /*
+             * Replace images
+             */
+             foreach (var replace in _rep.ImagePlaceholders)
             {
                 html = html.Replace(_rep.ImagePlaceholderStartTag + replace.Key + _rep.ImagePlaceholderEndTag,
                     "<img src=\"data: image / " + ImageHandler.GetImageTypeFromMemStream(replace.Value) + "; base64," +
                     ImageHandler.GetBase64FromMemStream(replace.Value) + "\"/>");
             }
-        
 
+            /*
+             * Replace Tables
+             */
             foreach (var trDict in _rep.TablePlaceholders) //Take a Row/Table (one Dictionary) at a time
             {
 
-                var trCol0 = trDict.First(); //This is the first placeholder
+                var trCol0 = trDict.First(); //This is the first placeholder in the row. We'll need 
+                //just that one to find a matching table col
                 // Find the first text element matching the search string - Then we will find the row -
                 // where the text (placeholder) is inside a table cell --> this is the row we are searching for.
                 var placeholder = _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag;
@@ -52,7 +60,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
                                 html = html.Replace(
                                     _rep.TablePlaceholderStartTag + item.Key + _rep.TablePlaceholderEndTag,
-                                    item.Value[j]);
+                                    item.Value[index]);
 
 
                                 break;
@@ -63,9 +71,10 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
 
 
-                        if (j < trCol0.Value.Length - 1)
+                        if (j < trCol0.Value.Length - 1)//If we have not reached the end of the rows to insert, we 
+                        //can insert the resulting row
                         {
-                            html = html.Insert((match.Index + match.Length), copiedRow);
+                            html = html.Insert((match.Index + (j+1)*match.Length), copiedRow);
 
                         }
 
