@@ -23,6 +23,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                     "<img src=\"data: image / " + ImageHandler.GetImageTypeFromMemStream(replace.Value) + "; base64," +
                     ImageHandler.GetBase64FromMemStream(replace.Value) + "\"/>");
             }
+        
 
             foreach (var trDict in _rep.TablePlaceholders) //Take a Row/Table (one Dictionary) at a time
             {
@@ -31,7 +32,8 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 // Find the first text element matching the search string - Then we will find the row -
                 // where the text (placeholder) is inside a table cell --> this is the row we are searching for.
                 var placeholder = _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag;
-                var regex = new Regex(@"<tr.*?" + placeholder + ".*?</tr>");
+
+                var regex = new Regex("<tr((?!<tr)[\\s\\S])*"+placeholder+"[\\s\\S]*</tr>");
                 var match = regex.Match(html);
                 string copiedRow = match.Value;
                 if (match.Success)

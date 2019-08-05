@@ -15,3 +15,4 @@ F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\obj\Debug\netco
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\obj\Debug\netcoreapp2.1\ExampleApplication.csproj.CopyComplete
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\obj\Debug\netcoreapp2.1\ExampleApplication.dll
 F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\obj\Debug\netcoreapp2.1\ExampleApplication.pdb
+F:\___PROGRAMMING_SOURCETREE\DocXToPdfConvter\ExampleApplication\bin\Debug\netcoreapp2.1\Test-HTML-page.html

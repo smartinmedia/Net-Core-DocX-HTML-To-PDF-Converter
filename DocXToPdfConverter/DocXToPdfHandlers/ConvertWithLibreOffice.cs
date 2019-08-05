@@ -46,6 +46,8 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         public static void Convert(string inputFile, string outputFile, string libreOfficePath)
         {
             string commandString="";
+            string targetFile = "";
+
 
             if (libreOfficePath == "")
             {
@@ -53,7 +55,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             }
 
             //Create tmp folder
-            var tmpFolder = Path.Combine(Path.GetDirectoryName(outputFile), "DocXToPdfConverterTmp");
+            var tmpFolder = Path.Combine(Path.GetDirectoryName(outputFile), "DocXToPdfConverterTmp"+Guid.NewGuid().ToString().Substring(0, 10));
             if (!Directory.Exists(tmpFolder))
             {
                 Directory.CreateDirectory(tmpFolder);
@@ -63,11 +65,20 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             {
                 commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --nologo --headless --outdir {0}", tmpFolder, inputFile);
                 //commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --outdir {0}", System.IO.Path.GetDirectoryName(pdfFile), inputFile);
+                targetFile =  Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
+
             }
             else if (inputFile.EndsWith(".docx") && outputFile.EndsWith(".pdf"))
             {
-                commandString = String.Format("--convert-to pdf --nologo --headless --outdir {0} {1}",
+                commandString = String.Format("--convert-to pdf:writer_pdf_Export {1}--nologo --headless --outdir {0}",
                     tmpFolder, inputFile);
+                targetFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
+            }
+            else if (inputFile.EndsWith(".docx") && outputFile.EndsWith(".html"))
+            {
+                commandString = String.Format("--convert-to html:HTML  {1} --nologo --headless --outdir {0}",
+                    tmpFolder, inputFile);
+                targetFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".html");
             }
 
             ProcessStartInfo procStartInfo =
@@ -96,7 +107,6 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             }
             else
             {
-                var targetFile = Path.GetFileNameWithoutExtension(inputFile) + ".pdf";
                 if (File.Exists(outputFile)) File.Delete(outputFile);
                 if (File.Exists(System.IO.Path.Combine(tmpFolder, targetFile)))
                 {

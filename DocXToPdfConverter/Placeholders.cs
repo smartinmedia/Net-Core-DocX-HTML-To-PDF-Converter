@@ -8,6 +8,24 @@ namespace DocXToPdfConverter
     
     public class Placeholders
     {
+
+        public Placeholders()
+        {
+            this.NewLineTag = "<br/>";
+            this.TextPlaceholderStartTag = "##";
+            this.TextPlaceholderEndTag = "##";
+            this.TablePlaceholderStartTag = "==";
+            this.TablePlaceholderEndTag = "==";
+            this.ImagePlaceholderStartTag = "++";
+            this.ImagePlaceholderEndTag = "++";
+
+            this.TextPlaceholders = new Dictionary<string, string>();
+            this.TablePlaceholders = new List<Dictionary<string, string[]>>();
+            this.ImagePlaceholders = new Dictionary<string, MemoryStream>();
+        }
+
+
+
         //NewLineTags are important only for .docx as input. If you use .html as input, then just use "<br
 
         public string NewLineTag { get; set; }
