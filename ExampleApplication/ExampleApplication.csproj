@@ -16,6 +16,9 @@
     <None Update="QRCode.PNG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="smartinmedia.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test-HTML-page.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

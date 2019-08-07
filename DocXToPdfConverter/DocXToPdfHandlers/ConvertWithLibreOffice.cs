@@ -46,7 +46,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         public static void Convert(string inputFile, string outputFile, string libreOfficePath)
         {
             string commandString="";
-            string targetFile = "";
+            string convertedFile = "";
 
 
             if (libreOfficePath == "")
@@ -55,7 +55,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             }
 
             //Create tmp folder
-            var tmpFolder = Path.Combine(Path.GetDirectoryName(outputFile), "DocXToPdfConverterTmp"+Guid.NewGuid().ToString().Substring(0, 10));
+            var tmpFolder = Path.Combine(Path.GetDirectoryName(outputFile), "DocXHtmlToPdfConverterTmp"+Guid.NewGuid().ToString().Substring(0, 10));
             if (!Directory.Exists(tmpFolder))
             {
                 Directory.CreateDirectory(tmpFolder);
@@ -63,28 +63,28 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             if ((inputFile.EndsWith(".html") || inputFile.EndsWith(".htm")) && outputFile.EndsWith(".pdf"))
             {
-                commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --nologo --headless --outdir {0}", tmpFolder, inputFile);
+                commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --invisible --headless --outdir {0}", tmpFolder, inputFile);
                 //commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --outdir {0}", System.IO.Path.GetDirectoryName(pdfFile), inputFile);
-                targetFile =  Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
+                convertedFile =  Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
 
             }
             else if (inputFile.EndsWith(".docx") && outputFile.EndsWith(".pdf"))
             {
-                commandString = String.Format("--convert-to pdf:writer_pdf_Export {1}--nologo --headless --outdir {0}",
+                commandString = String.Format("--convert-to pdf:writer_pdf_Export {1}--invisible --headless --outdir {0}",
                     tmpFolder, inputFile);
-                targetFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
+                convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
             }
             else if (inputFile.EndsWith(".docx") && (outputFile.EndsWith(".html") || outputFile.EndsWith(".htm")))
             {
-                commandString = String.Format("--convert-to html:HTML  {1} --nologo --headless --outdir {0}",
+                commandString = String.Format("--convert-to html:HTML:EmbedImages  {1} --invisible --headless --outdir {0}",
                     tmpFolder, inputFile);
-                targetFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".html");
+                convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".html");
             }
             else if ((inputFile.EndsWith(".html") || inputFile.EndsWith(".htm")) && (outputFile.EndsWith(".docx")))
             {
-                commandString = String.Format("--convert-to docx  {1} --nologo --headless --outdir {0}",
+                commandString = String.Format("--convert-to docx:\"Office Open XML Text\"  {1} --invisible --headless --outdir {0}",
                     tmpFolder, inputFile);
-                targetFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".docx");
+                convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".docx");
             }
 
 
@@ -115,18 +115,33 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             else
             {
                 if (File.Exists(outputFile)) File.Delete(outputFile);
-                if (File.Exists(System.IO.Path.Combine(tmpFolder, targetFile)))
+                if (File.Exists(convertedFile))
                 {
-                    System.IO.File.Move(System.IO.Path.Combine(tmpFolder, targetFile), outputFile);
+                    System.IO.File.Move(convertedFile, outputFile);
                     
                 }
+                ClearDirectory(tmpFolder);
                 Directory.Delete(tmpFolder);
             }
 
         }
 
 
+        private static void ClearDirectory(string folderName)
+        {
+            DirectoryInfo dir = new DirectoryInfo(folderName);
 
+            foreach (FileInfo fi in dir.GetFiles())
+            {
+                fi.Delete();
+            }
+
+            foreach (DirectoryInfo di in dir.GetDirectories())
+            {
+                ClearDirectory(di.FullName);
+                di.Delete();
+            }
+        }
 
 
     }

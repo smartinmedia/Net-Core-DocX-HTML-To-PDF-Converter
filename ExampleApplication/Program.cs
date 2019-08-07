@@ -22,10 +22,30 @@ namespace ExampleApplication
         static void Main(string[] args)
         {
 
+            /*
+             * Your TODO:
+             * 1. Enter your LibreOffice path below
+             * 2. Have an input file with placeholders ready, in docx or HTML. Create your own placeholders (from the class Placeholders)
+             * 3. Create an object for "ReportGenerator"
+             * 4. Execute the method "Convert" on the object ReportGenerator.
+             * Possible conversions: from HTML or from DOCX to PDF, HTML, DOCX
+             *
+             */
+
+
+            //Enter the location of your LibreOffice soffice.exe below, full path with "soffice.exe" at the end
+            //or anything you have in Linux...
+
+            string locationOfLibreOfficeSoffice =
+                @"F:\PortableApps\LibreOfficePortable\App\libreoffice\program\soffice.exe";
+
+
             //This is only to get this example to work (find the word docx and the html file, which were
-            //shipped with this.
+            //shipped with this).
             string executableLocation = Path.GetDirectoryName(
                 Assembly.GetExecutingAssembly().Location);
+
+            //Here are the 2 test files as input. They contain placeholders
             string docxLocation = Path.Combine(executableLocation, "Test-Template.docx");
             string htmlLocation = Path.Combine(executableLocation, "Test-HTML-page.html");
 
@@ -107,6 +127,8 @@ namespace ExampleApplication
 
             
             /*
+             *
+             *
              * Execution of conversion tests
              *
              *
@@ -114,12 +136,18 @@ namespace ExampleApplication
 
             //Most important: give the full path to the soffice.exe file including soffice.exe.
             //Don't know how that would be named on Linux...
-            var test = new ReportGenerator(@"F:\PortableApps\LibreOfficePortable\App\libreoffice\program\soffice.exe");
+            var test = new ReportGenerator(locationOfLibreOfficeSoffice);
+
+            //Convert from HTML to HTML
+            test.Convert(htmlLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-HTML-page-out.html"), placeholders);
+
+            //Convert from HTML to PDF
+            test.Convert(htmlLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-HTML-page-out.pdf"), placeholders);
+
+            //Convert from HTML to DOCX
+            test.Convert(htmlLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-HTML-page-out.docx"), placeholders);
 
 
-            test.GenerateReportFromHtmlToHtml(htmlLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-HTML-page-out.html"), placeholders);
-
-            //test.GenerateReportFromHtmlToPdf("f:\\vmc\\simhtml.htm", "f:\\vmc\\simhtml.pdf", myDictionary);
             //test.GenerateReportFromDocxToDocX("Test-Template.docx", "F:\\vmc\\template.docx", myDictionary);
             //test.GenerateReportFromDocxToHtml("Test-Template.docx", "F:\\vmc\\template.html", placeholders);
 

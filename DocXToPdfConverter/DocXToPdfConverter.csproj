@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.10.0-beta0002" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
 
