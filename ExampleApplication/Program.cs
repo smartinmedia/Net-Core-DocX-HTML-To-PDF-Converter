@@ -2,7 +2,7 @@
  * https://github.com/smartinmedia/Net-Core-DocX-HTML-To-PDF-Converter
  *
  *
- * This application was written (c) by Dr. Martin Weihrauch 2019
+ * This application was coded (c) by Dr. Martin Weihrauch 2019
  * for Smart In Media GmbH & Co / https://www.smartinmedia.com
  * DISTRIBUTED UNDER THE MIT LICENSE
  *
@@ -121,7 +121,7 @@ namespace ExampleApplication
 
             //test.GenerateReportFromHtmlToPdf("f:\\vmc\\simhtml.htm", "f:\\vmc\\simhtml.pdf", myDictionary);
             //test.GenerateReportFromDocxToDocX("Test-Template.docx", "F:\\vmc\\template.docx", myDictionary);
-            test.GenerateReportFromDocxToHtml("Test-Template.docx", "F:\\vmc\\template.html", placeholders);
+            //test.GenerateReportFromDocxToHtml("Test-Template.docx", "F:\\vmc\\template.html", placeholders);
 
 
 

@@ -1,21 +1,22 @@
-﻿using System;
+﻿/* Net-Core-DocX-HTML-To-PDF-Converter
+ * https://github.com/smartinmedia/Net-Core-DocX-HTML-To-PDF-Converter
+ *
+ *
+ * This application was coded (c) by Dr. Martin Weihrauch 2019
+ * for Smart In Media GmbH & Co / https://www.smartinmedia.com
+ * DISTRIBUTED UNDER THE MIT LICENSE
+ *
+ *
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using DocXToPdfConverter.DocXToPdfHandlers;
-using HtmlAgilityPack;
 
-/*
- * (c) by Smart In Media GmbH & Co. KG
- * www.smartinmedia.com
- * Distributed under the MIT License
- * Smart In Media does not give any warranty and cannot be held
- * liable for this code.
- *
- *
- *
- *
- */
+
  
 namespace DocXToPdfConverter
 {
@@ -30,8 +31,43 @@ namespace DocXToPdfConverter
             _locationOfLibreOfficeSoffice = locationOfLibreOfficeSoffice;
         }
 
+        public void Convert(string inputFile, string outputFile, Placeholders rep)
+        {
+            if (inputFile.EndsWith(".docx"))
+            {
+                if (outputFile.EndsWith(".docx"))
+                {
+                    GenerateReportFromDocxToDocX(inputFile, outputFile, rep);
+                }
+                else if (outputFile.EndsWith(".pdf"))
+                {
+                    GenerateReportFromDocxToPdf(inputFile, outputFile, rep);
+                }
+                else if(outputFile.EndsWith(".html") || outputFile.EndsWith(".htm"))
+                {
+                    GenerateReportFromDocxToHtml(inputFile, outputFile, rep);
+                }
+            }
+            else if (inputFile.EndsWith(".html") || inputFile.EndsWith(".htm"))
+            {
+                if (outputFile.EndsWith(".html") || outputFile.EndsWith(".htm"))
+                {
+                    GenerateReportFromHtmlToHtml(inputFile, outputFile, rep);
+                }
+                else if (outputFile.EndsWith(".docx"))
+                {
+                    
+                    GenerateReportFromHtmlToDocx(inputFile, outputFile, rep);
+                }
+                else if (outputFile.EndsWith(".pdf"))
+                {
+                    GenerateReportFromHtmlToPdf(inputFile, outputFile, rep);
+                }
+            }
+        }
+
         //string docxSource = filename with path
-        public void GenerateReportFromDocxToDocX(string docxSource, string docxTarget, Placeholders rep)
+        private void GenerateReportFromDocxToDocX(string docxSource, string docxTarget, Placeholders rep)
         {
             var docx = new DocXHandler(docxSource, rep);
             var ms = docx.ReplaceAll();
@@ -39,31 +75,31 @@ namespace DocXToPdfConverter
         }
 
         ////string docxSource = filename with path
-        public void GenerateReportFromDocxToPdf(string docxSource, string pdfTarget, Placeholders rep)
+        private void GenerateReportFromDocxToPdf(string docxSource, string pdfTarget, Placeholders rep)
         {
             var docx = new DocXHandler(docxSource, rep);
             var ms = docx.ReplaceAll();
-            var tmpFile = Path.GetFileNameWithoutExtension(pdfTarget) + Guid.NewGuid().ToString().Substring(0,10)+".docx";
+            var tmpFile = Path.Combine(Path.GetDirectoryName(pdfTarget), Path.GetFileNameWithoutExtension(pdfTarget) + Guid.NewGuid().ToString().Substring(0,10)+".docx");
             StreamHandler.WriteMemoryStreamToDisk(ms, tmpFile);
             ConvertWithLibreOffice.Convert(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
             File.Delete(tmpFile);
         }
 
         
-        public void GenerateReportFromDocxToHtml(string docxSource, string htmlTarget, Placeholders rep)
+        private void GenerateReportFromDocxToHtml(string docxSource, string htmlTarget, Placeholders rep)
         {
             var docx = new DocXHandler(docxSource, rep);
             var ms = docx.ReplaceAll();
-            var tmpFile = Path.GetFileNameWithoutExtension(docxSource)+Guid.NewGuid().ToString().Substring(0,10) + ".docx";
+            var tmpFile = Path.Combine(Path.GetDirectoryName(htmlTarget), Path.GetFileNameWithoutExtension(docxSource)+Guid.NewGuid().ToString().Substring(0,10) + ".docx");
             StreamHandler.WriteMemoryStreamToDisk(ms, tmpFile);
-            ConvertWithLibreOffice.Convert(tmpFile, htmlTarget,_locationOfLibreOfficeSoffice);
+            ConvertWithLibreOffice.Convert(tmpFile, htmlTarget, _locationOfLibreOfficeSoffice);
             //PtConvertDocxToHtml.ConvertToHtml(tmpFile, htmlTargetDirectory);
             File.Delete(tmpFile);
 
         }
 
 
-        public void GenerateReportFromHtmlToHtml(string htmlSource, string htmlTarget, Placeholders rep)
+        private void GenerateReportFromHtmlToHtml(string htmlSource, string htmlTarget, Placeholders rep)
         {
             string html = File.ReadAllText(htmlSource);
             html = HtmlHandler.ReplaceAll(html, rep);
@@ -71,53 +107,28 @@ namespace DocXToPdfConverter
         }
 
 
-        //This requires the HtmlAgilityPack
         //string htmlSource = filename to a *.html/*.htm file with path
-        public void GenerateReportFromHtmlToDocx(string htmlSource, string pdfTarget, Placeholders rep)
+        private void GenerateReportFromHtmlToDocx(string htmlSource, string docxTarget, Placeholders rep)
         {
-            /*
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(htmlSource);
-            htmlDoc.OptionFixNestedTags = true;
-            htmlDoc.OptionOutputAsXml = true;
-            htmlDoc.OptionCheckSyntax = true;
-            HtmlNode bodyNode = htmlDoc.DocumentNode;
-            htmlSource = bodyNode.WriteTo();
-            */
-            PtHtmlConvertToDocx.ConvertToDocx(htmlSource, Path.GetDirectoryName(pdfTarget));
-            
+            var tmpFile = Path.Combine(Path.GetDirectoryName(docxTarget), Path.GetFileNameWithoutExtension(htmlSource) + Guid.NewGuid().ToString().Substring(0, 10) + ".docx");
+            GenerateReportFromHtmlToHtml(htmlSource, tmpFile, rep);
+            ConvertWithLibreOffice.Convert(tmpFile, docxTarget, _locationOfLibreOfficeSoffice);
+            File.Delete(tmpFile);
+
         }
 
 
         //This requires the HtmlAgilityPack
         //string htmlSource = filename to a *.html/*.htm file with path
-        public void GenerateReportFromHtmlToPdf(string htmlSource, string pdfTarget, Placeholders rep)
+        private void GenerateReportFromHtmlToPdf(string htmlSource, string pdfTarget, Placeholders rep)
         {
-            string html = File.ReadAllText(htmlSource);
+            var tmpFile = Path.Combine(Path.GetDirectoryName(pdfTarget), Path.GetFileNameWithoutExtension(htmlSource) + Guid.NewGuid().ToString().Substring(0, 10) + ".html");
+            GenerateReportFromHtmlToHtml(htmlSource, tmpFile, rep);
+            ConvertWithLibreOffice.Convert(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
+            File.Delete(tmpFile);
 
-            ConvertWithLibreOffice.Convert(htmlSource, pdfTarget, _locationOfLibreOfficeSoffice);
         }
 
-        /*******************************************************************************************#
-         *
-         * FROM OPENXML POWERTOOLS
-         *
-         * HtmlToWmlConverter expects the HTML to be passed as an XElement, i.e. as XML.  While the HTML test files that
-         * are included in Open-Xml-PowerTools are able to be read as XML, most HTML is not able to be read as XML.
-         * The best solution is to use the HtmlAgilityPack, which can parse HTML and save as XML.  The HtmlAgilityPack
-         * is licensed under the Ms-PL (same as Open-Xml-PowerTools) so it is convenient to include it in your solution,
-         * and thereby you can convert HTML to XML that can be processed by the HtmlToWmlConverter.
-         * 
-         * A convenient way to get the DLL that has been checked out with HtmlToWmlConverter is to clone the repo at
-         * https://github.com/EricWhiteDev/HtmlAgilityPack
-         * 
-         * That repo contains only the DLL that has been checked out with HtmlToWmlConverter.
-         * 
-         * Of course, you can also get the HtmlAgilityPack source and compile it to get the DLL.  You can find it at
-         * http://codeplex.com/HtmlAgilityPack
-         * 
-         * We don't include the HtmlAgilityPack in Open-Xml-PowerTools, to simplify installation.  The example files
-         * in this module do not require HtmlAgilityPack to run.
-        *******************************************************************************************/
+
     }
 }

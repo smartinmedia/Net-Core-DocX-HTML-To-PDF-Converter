@@ -61,7 +61,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 Directory.CreateDirectory(tmpFolder);
             }
 
-            if (inputFile.EndsWith(".html") || inputFile.EndsWith(".htm") && outputFile.EndsWith(".pdf"))
+            if ((inputFile.EndsWith(".html") || inputFile.EndsWith(".htm")) && outputFile.EndsWith(".pdf"))
             {
                 commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --nologo --headless --outdir {0}", tmpFolder, inputFile);
                 //commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --outdir {0}", System.IO.Path.GetDirectoryName(pdfFile), inputFile);
@@ -74,12 +74,19 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                     tmpFolder, inputFile);
                 targetFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
             }
-            else if (inputFile.EndsWith(".docx") && outputFile.EndsWith(".html"))
+            else if (inputFile.EndsWith(".docx") && (outputFile.EndsWith(".html") || outputFile.EndsWith(".htm")))
             {
                 commandString = String.Format("--convert-to html:HTML  {1} --nologo --headless --outdir {0}",
                     tmpFolder, inputFile);
                 targetFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".html");
             }
+            else if ((inputFile.EndsWith(".html") || inputFile.EndsWith(".htm")) && (outputFile.EndsWith(".docx")))
+            {
+                commandString = String.Format("--convert-to docx  {1} --nologo --headless --outdir {0}",
+                    tmpFolder, inputFile);
+                targetFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".docx");
+            }
+
 
             ProcessStartInfo procStartInfo =
                 new ProcessStartInfo(libreOfficePath, commandString);

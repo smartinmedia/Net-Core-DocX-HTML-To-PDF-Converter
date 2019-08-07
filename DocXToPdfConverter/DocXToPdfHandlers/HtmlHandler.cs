@@ -32,38 +32,38 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             /*
              * Replace Tables
              */
-            foreach (var trDict in _rep.TablePlaceholders) //Take a Row/Table (one Dictionary) at a time
+            foreach (var table in _rep.TablePlaceholders) //Take a Row/Table (one Dictionary) at a time
             {
 
-                var trCol0 = trDict.First(); //This is the first placeholder in the row. We'll need 
+                var tableCol0 = table.First(); //This is the first placeholder in the row, so the first columns. We'll need 
                 //just that one to find a matching table col
                 // Find the first text element matching the search string - Then we will find the row -
                 // where the text (placeholder) is inside a table cell --> this is the row we are searching for.
-                var placeholder = _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag;
+                var placeholder = _rep.TablePlaceholderStartTag + tableCol0.Key + _rep.TablePlaceholderEndTag;
 
-                var regex = new Regex("<tr((?!<tr)[\\s\\S])*"+placeholder+"[\\s\\S]*</tr>");
+                var regex = new Regex("<tr((?!<tr)[\\s\\S])*"+placeholder+"[\\s\\S]*?</tr>");
                 var match = regex.Match(html);
-                string copiedRow = match.Value;
-                if (match.Success)
+                if (match.Success) //Now we have the correct table and the row containing the placeholders
                 {
+                    string copiedRow = match.Value;
+                    var laenge = copiedRow.Length;
+                    int differenceInNoCharacters = 0;
 
-                    for (var j = 0; j < trCol0.Value.Length; j++) //Lets create row by row and replace placeholders
+                    for (var newRow = 0; newRow < tableCol0.Value.Length; newRow++) //Lets create new row by new row and replace placeholders
                     {
-                        for (var index = 0;
-                            index < trDict.Count;
-                            index++) //Now cycle through the "columns" (keys) of the Dictionary and replace item by item
+                        for (var tableCol = 0;
+                            tableCol < table.Count;
+                            tableCol++) //Now cycle through the "columns" (keys) of the Dictionary and replace item by item
                         {
-                            var item = trDict.ElementAt(index);
+                            var colPlaceholder = table.ElementAt(tableCol);
 
-                            if (html.Contains(_rep.TablePlaceholderStartTag + item.Key + _rep.TablePlaceholderEndTag))
+                            if (html.Contains(_rep.TablePlaceholderStartTag + colPlaceholder.Key + _rep.TablePlaceholderEndTag))
                             {
-
+                                var oldHtml = html;
                                 html = html.Replace(
-                                    _rep.TablePlaceholderStartTag + item.Key + _rep.TablePlaceholderEndTag,
-                                    item.Value[index]);
-
-
-                                break;
+                                    _rep.TablePlaceholderStartTag + colPlaceholder.Key + _rep.TablePlaceholderEndTag,
+                                    colPlaceholder.Value[newRow]);
+                                differenceInNoCharacters += html.Length - oldHtml.Length;
                             }
                         }
 
@@ -71,10 +71,10 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
 
 
-                        if (j < trCol0.Value.Length - 1)//If we have not reached the end of the rows to insert, we 
+                        if (newRow < tableCol0.Value.Length - 1)//If we have not reached the end of the rows to insert, we 
                         //can insert the resulting row
                         {
-                            html = html.Insert((match.Index + (j+1)*match.Length), copiedRow);
+                            html = html.Insert((match.Index + ((newRow+1)*match.Length)+differenceInNoCharacters), copiedRow);
 
                         }
 

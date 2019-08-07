@@ -1,4 +1,16 @@
-﻿using System.Collections.Generic;
+﻿/* Net-Core-DocX-HTML-To-PDF-Converter
+ * https://github.com/smartinmedia/Net-Core-DocX-HTML-To-PDF-Converter
+ *
+ *
+ * This application was coded (c) by Dr. Martin Weihrauch 2019
+ * for Smart In Media GmbH & Co / https://www.smartinmedia.com
+ * DISTRIBUTED UNDER THE MIT LICENSE
+ *
+ *
+ */
+
+
+using System.Collections.Generic;
 using System.IO;
 using DocumentFormat.OpenXml.Office2010.ExcelAc;
 
