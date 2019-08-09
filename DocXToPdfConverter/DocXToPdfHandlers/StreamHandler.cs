@@ -1,7 +1,6 @@
 ﻿using System.IO;
 
-
-namespace DocXToPdfConverter
+namespace DocXToPdfConverter.DocXToPdfHandlers
 {
     public class StreamHandler
     {

@@ -110,7 +110,7 @@ namespace DocXToPdfConverter
         //string htmlSource = filename to a *.html/*.htm file with path
         private void GenerateReportFromHtmlToDocx(string htmlSource, string docxTarget, Placeholders rep)
         {
-            var tmpFile = Path.Combine(Path.GetDirectoryName(docxTarget), Path.GetFileNameWithoutExtension(htmlSource) + Guid.NewGuid().ToString().Substring(0, 10) + ".docx");
+            var tmpFile = Path.Combine(Path.GetDirectoryName(docxTarget), Path.GetFileNameWithoutExtension(htmlSource) + Guid.NewGuid().ToString().Substring(0, 10) + ".html");
             GenerateReportFromHtmlToHtml(htmlSource, tmpFile, rep);
             ConvertWithLibreOffice.Convert(tmpFile, docxTarget, _locationOfLibreOfficeSoffice);
             File.Delete(tmpFile);

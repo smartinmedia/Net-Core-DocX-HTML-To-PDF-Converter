@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace DocXToPdfConverter
+namespace DocXToPdfConverter.DocXToPdfHandlers
 {
     public static class ImageHandler
     {
 
         public static Image GetImageFromStream(MemoryStream ms)
         {
+            ms.Position = 0;
             var image = System.Drawing.Image.FromStream(ms);
             ms.Position = 0;
             return image;
