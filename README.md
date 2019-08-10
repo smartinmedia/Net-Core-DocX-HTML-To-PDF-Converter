@@ -1,7 +1,5 @@
 # Report-From-DocX-HTML-To-PDF-Converter - Create custom reports based on Word docx or HTML documents and convert to PDF with .NET CORE
 
-**Still under development... don't clone yet...**
-
 ## Donate Now!
 We are a company (Smart In Media GmbH & Co. KG, https://www.smartinmedia.com) and have to pay salaries to our developers. As we also believe in free software, we give away this under the MIT license and you can do whatever you want with it. Your are not bound to making continuous paments, etc. So, if you saved money and time by using this library, please donate to us via Paypal!
 
@@ -38,7 +36,19 @@ Don't get scared away that I use LibreOffice, it is easier than you may think!
 
 2. Download LibreOffice (https://www.libreoffice.org/download/portable-versions/). I recommend the portable edition as it does not install anything in your server. It is like unzipping files onto your harddrive. Note the path to "soffice.exe" (I don't know what the file is called in Linux / MacOS, probably just soffice. It is an executable to run a headless, mute version of LibreOffice for conversion processes). On my Windows machine, it is under: C:\PortableApps\LibreOfficePortable\App\libreoffice\program\soffice.exe. 
 
-3. In this repository, there are 2 projects: the library itself and the ExampleApplication. Have a look at program.cs on how to implement the library. Here are the steps:
+3. Have your templates (Word docx or HTML) ready. In the repository of the project ExampleApplication, i added both, docx and HTML: Test-html-page.html and Test-Template.docx. When you run the sample application, the output will land in: 
+\DocXToPdfConvter\ExampleApplication\bin\Debug\netcoreapp2.1
+
+```csharp
+ string executableLocation = Path.GetDirectoryName(
+                Assembly.GetExecutingAssembly().Location);
+
+            //Here are the 2 test files as input. They contain placeholders
+            string docxLocation = Path.Combine(executableLocation, "Test-Template.docx");
+            string htmlLocation = Path.Combine(executableLocation, "Test-HTML-page.html");
+```            
+
+4. In this repository, there are 2 projects: the library itself and the ExampleApplication. Have a look at program.cs on how to implement the library. Here are the steps:
 
 a) Add the path to your soffice.exe from LibreOffice, e. g.:
 
