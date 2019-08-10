@@ -308,7 +308,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             MainDocumentPart mainPart = wordprocessingDocument.MainDocumentPart;
 
             Uri imageUri = new Uri("/word/media/" +
-                                   System.IO.Path.GetFileName(placeholder.Key), UriKind.Relative);
+                                   placeholder.Key + _imageCounter, UriKind.Relative);
 
             // Create "image" part in /word/media
             // Change content type for other image types.
@@ -324,11 +324,9 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             PackagePart documentPackagePart =
                 mainPart.OpenXmlPackage.Package.GetPart(new Uri("/word/document.xml", UriKind.Relative));
 
-            Console.Out.WriteLine(documentPackagePart.Uri);
-
             // URI to the image is relative to relationship document.
             PackageRelationship imageRelationshipPart = documentPackagePart.CreateRelationship(
-                new Uri("media/" + placeholder.Key, UriKind.Relative),
+                new Uri("media/" + placeholder.Key + _imageCounter, UriKind.Relative),
                 TargetMode.Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
 
             //AddImageToBody(wordprocessingDocument, imageRelationshipPart.Id);
