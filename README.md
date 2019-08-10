@@ -1,6 +1,7 @@
 # Report-From-DocX-HTML-To-PDF-Converter - Create custom reports based on Word docx or HTML documents and convert to PDF with .NET CORE
 
 ## Donate Now!
+[![paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](GB67WF3E6JBZN)
 We are a company (Smart In Media GmbH & Co. KG, https://www.smartinmedia.com) and have to pay salaries to our developers. As we also believe in free software, we give away this under the MIT license and you can do whatever you want with it. Your are not bound to making continuous paments, etc. So, if you saved money and time by using this library, please donate to us via Paypal!
 
 ## Background/Why?
