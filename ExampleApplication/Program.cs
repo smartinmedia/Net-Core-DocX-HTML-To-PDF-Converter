@@ -122,7 +122,7 @@ namespace ExampleApplication
 
             placeholders.ImagePlaceholders = new Dictionary<string, MemoryStream>
             {
-                {"QRCode", qrImage },
+                //{"QRCode", qrImage },
                 {"ProductImage", productImage }
             };
 
@@ -149,13 +149,18 @@ namespace ExampleApplication
             test.Convert(htmlLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-HTML-page-out.docx"), placeholders);
 
             //Convert from DOCX to DOCX
-            test.Convert(docxLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-Template-out.docx"), placeholders);
-            
+            test.Convert(@"f:\temp\converter\tt.docx", @"f:\temp\converter\tt-out.docx", placeholders);
+            //test.Convert(docxLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-Template-out.docx"), placeholders);
+
             //Convert from DOCX to HTML
-            test.Convert(docxLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-Template-out.html"), placeholders);
+            test.Convert(@"f:\temp\converter\tt.docx", @"f:\temp\converter\tt-out.html", placeholders);
+
+            //test.Convert(docxLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-Template-out.html"), placeholders);
 
             //Convert from DOCX to PDF
-            test.Convert(docxLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-Template-out.pdf"), placeholders);
+            test.Convert(@"f:\temp\converter\tt.docx", @"f:\temp\converter\tt-out.pdf", placeholders);
+
+            //test.Convert(docxLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-Template-out.pdf"), placeholders);
          
         }
     }

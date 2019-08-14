@@ -304,16 +304,17 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
         private void AppendImageToElement2(KeyValuePair<string, MemoryStream> placeholder, OpenXmlElement element, WordprocessingDocument wordprocessingDocument)
         {
+            string imageExtension = ImageHandler.GetImageTypeFromMemStream(placeholder.Value);
 
             MainDocumentPart mainPart = wordprocessingDocument.MainDocumentPart;
 
             Uri imageUri = new Uri("/word/media/" +
-                                   placeholder.Key + _imageCounter, UriKind.Relative);
+                                   placeholder.Key + _imageCounter + "."+ imageExtension, UriKind.Relative);
 
             // Create "image" part in /word/media
             // Change content type for other image types.
             PackagePart packageImagePart =
-                wordprocessingDocument.Package.CreatePart(imageUri, "Image/"+ImageHandler.GetImageTypeFromMemStream(placeholder.Value));
+                wordprocessingDocument.Package.CreatePart(imageUri, "Image/"+ imageExtension);
 
 
             // Feed data.
@@ -326,8 +327,25 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             // URI to the image is relative to relationship document.
             PackageRelationship imageRelationshipPart = documentPackagePart.CreateRelationship(
-                new Uri("media/" + placeholder.Key + _imageCounter, UriKind.Relative),
+                new Uri("media/" + placeholder.Key + _imageCounter + "." + imageExtension, UriKind.Relative),
                 TargetMode.Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
+
+
+            //AddImageToBody(wordprocessingDocument, imageRelationshipPart.Id);
+
+            
+            var imgTmp = ImageHandler.GetImageFromStream(placeholder.Value);
+
+            var drawing = GetImageElement(imageRelationshipPart.Id, placeholder.Key, "picture", imgTmp.Width, imgTmp.Height);
+
+            element.Parent.InsertAfter(new Paragraph(new Run(drawing)), element);
+
+    
+
+
+
+            //var drawing = GetImageElement(wordprocessingDocument, mainPart.GetIdOfPart(imagePart));
+
 
             //AddImageToBody(wordprocessingDocument, imageRelationshipPart.Id);
 
@@ -337,12 +355,6 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             //imagePart.FeedData(placeholder.Value);
 
-            var imgTmp = ImageHandler.GetImageFromStream(placeholder.Value);
-
-            var drawing = GetImageElement(imageRelationshipPart.Id, placeholder.Key, "picture", imgTmp.Width, imgTmp.Height);
-
-            //var drawing = GetImageElement(wordprocessingDocument, mainPart.GetIdOfPart(imagePart));
-            element.Parent.InsertAfter(new Paragraph(new Run(drawing)), element);
 
         }
 
