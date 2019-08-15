@@ -261,15 +261,61 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 {
                     foreach (var replace in _rep.ImagePlaceholders)
                     {
+                        string pl = _rep.ImagePlaceholderStartTag + replace.Key + _rep.ImagePlaceholderEndTag;
                         _imageCounter++;
-                        if (text.Text.Contains(_rep.ImagePlaceholderStartTag + replace.Key + _rep.ImagePlaceholderEndTag))
+                        if (text.Text.Contains(pl))
                         {
+                            var run = text.Ancestors<Run>().First();
+                            var newRunForImage = (Run)run.Clone();
+
+                            //Break the texts into the part before and after image. Then create separate runs for them
+                            var pos = text.Text.IndexOf(pl, StringComparison.CurrentCulture);
                             
-                            text.Text = text.Text.Replace(
-                                _rep.ImagePlaceholderStartTag + replace.Key + _rep.ImagePlaceholderEndTag,
-                                "");
-                            
-                            AppendImageToElement2(replace, text, doc);
+                            if(text.Text.Length > pl.Length)
+                            {
+                                if (pos == 0)
+                                {
+                                    var newAfterRun = (Run) run.Clone();
+                                    string afterText = text.Text.Substring(pl.Length, text.Text.Length - pl.Length);
+                                    Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
+                                    newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
+                                    newAfterRunText.Text = afterText;
+
+                                    run.Parent.InsertAfter(newAfterRun, run);
+                                }
+                                else if (text.Text.EndsWith(pl))
+                                {
+                                    var newBeforeRun = (Run)run.Clone();
+                                    string beforeText = text.Text.Substring(0, pos);
+                                    Text newBeforeRunText = newBeforeRun.GetFirstChild<Text>();
+                                    newBeforeRunText.Space = SpaceProcessingModeValues.Preserve;
+                                    newBeforeRunText.Text = beforeText;
+
+                                    run.Parent.InsertBefore(newBeforeRun, run);
+                                }
+                                else
+                                {
+                                    var newBeforeRun = (Run)run.Clone();
+                                    string beforeText = text.Text.Substring(0, pos);
+                                    Text newBeforeRunText = newBeforeRun.GetFirstChild<Text>();
+                                    newBeforeRunText.Space = SpaceProcessingModeValues.Preserve;
+                                    newBeforeRunText.Text = beforeText;
+                                    run.Parent.InsertBefore(newBeforeRun, run);
+
+                                    var newAfterRun = (Run)run.Clone();
+                                    string afterText = text.Text.Substring(pos + pl.Length, text.Text.Length - pos - pl.Length);
+                                    Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
+                                    newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
+                                    newAfterRunText.Text = afterText;
+                                    run.Parent.InsertAfter(newAfterRun, run);
+                                }
+                            }
+
+                            run.Parent.InsertBefore(newRunForImage, run);
+                            run.Remove();
+
+
+                            AppendImageToElement2(replace, newRunForImage, doc);
 
                             
                         }
@@ -337,8 +383,8 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             var imgTmp = ImageHandler.GetImageFromStream(placeholder.Value);
 
             var drawing = GetImageElement(imageRelationshipPart.Id, placeholder.Key, "picture", imgTmp.Width, imgTmp.Height);
-
-            element.Parent.InsertAfter(new Paragraph(new Run(drawing)), element);
+            element.AppendChild(drawing);
+            //element.Parent.InsertAfter(new Paragraph(new Run(drawing)), element);
 
     
 
