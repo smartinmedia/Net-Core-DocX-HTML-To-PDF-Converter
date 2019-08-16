@@ -1,12 +1,12 @@
 ﻿# Report-From-DocX-HTML-To-PDF-Converter - Create custom reports based on Word docx or HTML documents and convert to PDF with .NET CORE
 
-## Please Donate Now! And you get everything for free under MIT license!
+## Please Donate! 
 
 
 [![paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GB67WF3E6JBZN)
 
 
-We are a company (Smart In Media GmbH & Co. KG, https://www.smartinmedia.com) and have to pay salaries to our developers. As we also believe in free software, we give away this under the MIT license and you can do whatever you want with it. Your are not bound to making continuous paments, etc. So, if you saved money and time by using this library, please donate to us via Paypal!
+We are a company (Smart In Media GmbH & Co. KG, https://www.smartinmedia.com) and have to pay salaries to our developers. As we also believe in free software, we give away this under the __MIT license__ and you can do whatever you want with it. Other than with commercial libraries, you are not bound to making continuous paments, etc. So, if you saved money and time by using this library, please donate to us via Paypal!
 
 ## Background/Why?
 I was working on a medical project (https://www.easyradiology.net) and wanted that users receive a dynamically created PDF document via e-mail. Can't be too difficult, I thought. There'll be some library to do that. I discovered that in fact, there is PDF Sharp, an open source library. However, I found out that you have to "code" each line of the PDF yourself. What happens, if your sales department or user support wants to change just one line here or update a logo there in the document? Then, you have to go back to your code, change it, talk again to the sales dept or user support, if they are happy, etc until you can create a new release. This is super tedious. So I thought, would be great, if the sales department / user support can just create a simple Word docx or a HTML document with some placeholders and as a developer, you can just paste your dynamic content. 
@@ -63,7 +63,7 @@ string locationOfLibreOfficeSoffice =
 ```
 
 
-b) Define your __placeholders__, which you want to use either in your Word document or in a HTML document. There are 3 types of placeholders: one for plain text, one for table rows and one for images. A placeholder consists of a start tag, a string for the placeholder and an end tag. For instance, in your Word document or HTML document, you can place "##ThisIsAPlaceholder## - then the start and end tags are "##" and the "ThisIsAPlaceholder" is the string. To define placeholders, you have to create an object of the Placeholders class. You can customize the placeholder start and end tags and the "NewLineTag" (only for docx documents - for HTML, you just use the standard <br/>). If you don't define them, the following standard placeholders will be used. A start and an end tag do not have to be the same, they can also differ. __Important__: Different placeholder types (text, table row and images) MUST have different start/end tags!
+b) Define your __placeholders__, which you want to use either in your Word document or in a HTML document. There are 3 types of placeholders: one for plain text, one for table rows and one for images. A placeholder consists of a start tag, a string for the placeholder and an end tag. For instance, in your Word document or HTML document, you can place "##ThisIsAPlaceholder## - then the start and end tags are "##" and the "ThisIsAPlaceholder" is the string. To define placeholders, you have to create an object of the Placeholders class. You can customize the placeholder start and end tags and the "NewLineTag" (only for docx documents - for HTML, you just use the standard &lt;br/&gt;). If you don't define them, the following standard placeholders will be used. A start and an end tag do not have to be the same, they can also differ. __Important__: Different placeholder types (text, table row and images) MUST have different start/end tags!
 
 So, here we first define the NewLineTag (only for Word documents) and the start/end tags. If you want to use these exactly, you don't have to define them, they are autocreated by the constructor.
 
