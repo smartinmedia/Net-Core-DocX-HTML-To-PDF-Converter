@@ -17,10 +17,10 @@ Again, if you like it, please donate money or code!
 
 Report from DOCX / HTML to PDF Converter can parse the source document and introduce the dynamic content into predefined __placeholders__ It works on Windows (tested) and should work on Linux and MacOS. Then it can perform the following conversions:
 
-* DOCX to DOCX 
+* DOCX to DOCX (no need for LibreOffice)
 * DOCX to PDF
 * DOCX to HTML
-* HTML to HTML
+* HTML to HTML (no need for LibreOffice)
 * HTML to DOCX
 * HTML to PDF
 
