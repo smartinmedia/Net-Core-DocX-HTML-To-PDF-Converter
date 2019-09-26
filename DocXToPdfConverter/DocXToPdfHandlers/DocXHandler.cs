@@ -37,19 +37,23 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
         public MemoryStream ReplaceAll()
         {
-            if (_rep.TextPlaceholders.Count > 0)
+            if (_rep != null)
             {
-                ReplaceTexts();
+                if (_rep.TextPlaceholders.Count > 0)
+                {
+                    ReplaceTexts();
+                }
+
+                if (_rep.TablePlaceholders.Count > 0 && _rep.TablePlaceholders.First().Count > 0)
+                {
+                    ReplaceTableRows();
+                }
+                if (_rep.ImagePlaceholders.Count > 0)
+                {
+                    ReplaceImages();
+                }
             }
 
-            if (_rep.TablePlaceholders.Count > 0 && _rep.TablePlaceholders.First().Count > 0)
-            {
-                ReplaceTableRows();
-            }
-            if (_rep.ImagePlaceholders.Count > 0)
-            { 
-                ReplaceImages();
-            }
             _docxMs.Position = 0;
 
             return _docxMs;

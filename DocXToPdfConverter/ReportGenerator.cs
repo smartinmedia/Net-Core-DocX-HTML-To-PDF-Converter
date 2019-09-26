@@ -31,7 +31,7 @@ namespace DocXToPdfConverter
             _locationOfLibreOfficeSoffice = locationOfLibreOfficeSoffice;
         }
 
-        public void Convert(string inputFile, string outputFile, Placeholders rep)
+        public void Convert(string inputFile, string outputFile, Placeholders rep = null)
         {
             if (inputFile.EndsWith(".docx"))
             {

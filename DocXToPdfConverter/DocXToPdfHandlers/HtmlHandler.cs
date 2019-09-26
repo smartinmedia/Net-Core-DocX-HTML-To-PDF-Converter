@@ -10,6 +10,12 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
     {
         public static string ReplaceAll(string html, Placeholders _rep)
         {
+
+            if (_rep == null)
+            {
+                return html;
+            }
+
             /*
              * Replace Texts
              */
