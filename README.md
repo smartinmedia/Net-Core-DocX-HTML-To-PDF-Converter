@@ -2,6 +2,7 @@
 
 ## Please Donate! 
 
+#Now also as a Nuget Package (just search for "DocXToPdfConverter")!
 
 [![paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GB67WF3E6JBZN)
 
