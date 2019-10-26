@@ -430,12 +430,10 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 RemoveRsidInfo = true,
                 RemoveSmartTags = true,
                 RemoveSoftHyphens = true,
-                ReplaceTabsWithSpaces = true
+                ReplaceTabsWithSpaces = true,
+                RemoveBookmarks = true
             };
             MarkupSimplifier.SimplifyMarkup(doc, settings);
         }
-
-
-
     }
 }
