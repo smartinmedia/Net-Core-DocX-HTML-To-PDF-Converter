@@ -31,8 +31,8 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
              foreach (var replace in _rep.ImagePlaceholders)
             {
                 html = html.Replace(_rep.ImagePlaceholderStartTag + replace.Key + _rep.ImagePlaceholderEndTag,
-                    "<img src=\"data:image/" + ImageHandler.GetImageTypeFromMemStream(replace.Value) + ";base64," +
-                    ImageHandler.GetBase64FromMemStream(replace.Value) + "\"/>");
+                    "<img src=\"data:image/" + ImageHandler.GetImageTypeFromMemStream(replace.Value.memStream) + ";base64," +
+                    ImageHandler.GetBase64FromMemStream(replace.Value.memStream) + "\"/>");
             }
 
             /*

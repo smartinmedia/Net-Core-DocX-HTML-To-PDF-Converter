@@ -118,21 +118,28 @@ A cool feature is creating placeholders for table rows. The rows of the template
 ```
 
 
-Of course, you can also add images of many formats (jpg/jpeg, png is supported and a couple of others, too) into placeholders. Here is an example:
+Of course, you can also add images of many formats (jpg/jpeg, png is supported and a couple of others, too) into placeholders.
+<br>Since version 1.0.2, you can also set the dots per inch (DPI) for embedding images. The placeholders for images
+are again in a Dictionary of the type <string, ImageElement>. ImageElement is a class inside the placeholder class file.
+In ImageElement, you define Dpi as a double and the MemoryStream of the image. To get the image as a MemoryStream, just
+use the StreamHandler static class. Here is an example:
 
 
 ```csharp
-var productImage =
-                StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "ProductImage.jpg"));
+var productImage = StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "ProductImage.jpg"));
 
 var qrImage =
     StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "QRCode.PNG"));
 
-placeholders.ImagePlaceholders = new Dictionary<string, MemoryStream>
+var productImageElement = new ImageElement() {Dpi = 96, memStream = productImage};
+var qrImageElement = new ImageElement() {Dpi = 300, memStream = qrImage};
+
+placeholders.ImagePlaceholders = new Dictionary<string, ImageElement>
 {
-    {"QRCode", qrImage },
-    {"ProductImage", productImage }
+    {"QRCode", qrImageElement },
+    {"ProductImage", productImageElement }
 };
+
 ```
 
 c) As we now have everything setup, we can now start the conversion process(es). While converting, the placeholders are filled with the values. Of course docx to docx and html to html aren't really conversions, but I also added them to the functionality of the library, because that may be useful for some people.

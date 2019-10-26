@@ -33,7 +33,7 @@ namespace DocXToPdfConverter
 
             this.TextPlaceholders = new Dictionary<string, string>();
             this.TablePlaceholders = new List<Dictionary<string, string[]>>();
-            this.ImagePlaceholders = new Dictionary<string, MemoryStream>();
+            this.ImagePlaceholders = new Dictionary<string, ImageElement>();
         }
 
 
@@ -75,6 +75,12 @@ namespace DocXToPdfConverter
         public string ImagePlaceholderStartTag { get; set; }
         public string ImagePlaceholderEndTag { get; set; }
 
-        public Dictionary<string, MemoryStream> ImagePlaceholders { get; set; }
+        public Dictionary<string, ImageElement> ImagePlaceholders { get; set; }
+    }
+
+    public class ImageElement
+    {
+        public MemoryStream memStream { get; set; }
+        public double Dpi { get; set; } // Dots per inch
     }
 }

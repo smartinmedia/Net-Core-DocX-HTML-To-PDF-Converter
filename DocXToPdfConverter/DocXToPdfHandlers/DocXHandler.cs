@@ -316,9 +316,9 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         }
 
 
-        private void AppendImageToElement(KeyValuePair<string, MemoryStream> placeholder, OpenXmlElement element, WordprocessingDocument wordprocessingDocument)
+        private void AppendImageToElement(KeyValuePair<string, ImageElement> placeholder, OpenXmlElement element, WordprocessingDocument wordprocessingDocument)
         {
-            string imageExtension = ImageHandler.GetImageTypeFromMemStream(placeholder.Value);
+            string imageExtension = ImageHandler.GetImageTypeFromMemStream(placeholder.Value.memStream);
 
             MainDocumentPart mainPart = wordprocessingDocument.MainDocumentPart;
 
@@ -332,8 +332,8 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
 
             // Feed data.
-            placeholder.Value.Position = 0;
-            byte[] imageBytes = placeholder.Value.ToArray();// File.ReadAllBytes(fileName);
+            placeholder.Value.memStream.Position = 0;
+            byte[] imageBytes = placeholder.Value.memStream.ToArray();// File.ReadAllBytes(fileName);
             packageImagePart.GetStream().Write(imageBytes, 0, imageBytes.Length);
 
             PackagePart documentPackagePart =
@@ -348,9 +348,9 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             //AddImageToBody(wordprocessingDocument, imageRelationshipPart.Id);
 
             
-            var imgTmp = ImageHandler.GetImageFromStream(placeholder.Value);
+            var imgTmp = ImageHandler.GetImageFromStream(placeholder.Value.memStream);
 
-            var drawing = GetImageElement(imageRelationshipPart.Id, placeholder.Key, "picture", imgTmp.Width, imgTmp.Height);
+            var drawing = GetImageElement(imageRelationshipPart.Id, placeholder.Key, "picture", imgTmp.Width, imgTmp.Height, placeholder.Value.Dpi);
             element.AppendChild(drawing);
             
 
@@ -363,10 +363,11 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             string fileName,
             string pictureName,
             double width,
-            double height)
+            double height,
+            double ppi)
         {
             double englishMetricUnitsPerInch = 914400;
-            double pixelsPerInch = 96;
+            double pixelsPerInch = ppi;
 
             //calculate size in emu
             double emuWidth = width * englishMetricUnitsPerInch / pixelsPerInch;

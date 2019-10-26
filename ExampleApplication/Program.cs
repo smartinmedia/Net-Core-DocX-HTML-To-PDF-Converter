@@ -120,10 +120,13 @@ namespace ExampleApplication
             var qrImage =
                 StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "QRCode.PNG"));
 
-            placeholders.ImagePlaceholders = new Dictionary<string, MemoryStream>
+            var productImageElement = new ImageElement() {Dpi = 96, memStream = productImage};
+            var qrImageElement = new ImageElement() {Dpi = 300, memStream = qrImage};
+
+            placeholders.ImagePlaceholders = new Dictionary<string, ImageElement>
             {
-                {"QRCode", qrImage },
-                {"ProductImage", productImage }
+                {"QRCode", qrImageElement },
+                {"ProductImage", productImageElement }
             };
 
             
