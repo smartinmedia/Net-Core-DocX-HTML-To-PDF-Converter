@@ -7,6 +7,14 @@
     <StartupObject />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>1.0.2</Version>
+    <Authors>Dr. Martin Weihrauch</Authors>
+    <Company>Smart In Media</Company>
+    <Copyright>(c) Smart In Media</Copyright>
+    <Description>Report-From-DocX-HTML-To-PDF-Converter - Create custom reports based on Word docx or HTML documents and convert to PDF with .NET CORE</Description>
+    <PackageProjectUrl>https://github.com/smartinmedia/Net-Core-DocX-HTML-To-PDF-Converter</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/smartinmedia/Net-Core-DocX-HTML-To-PDF-Converter</RepositoryUrl>
+    <PackageTags>Docx, PDF, HTML, converter</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

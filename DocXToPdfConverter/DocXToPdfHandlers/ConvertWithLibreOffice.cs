@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -45,7 +46,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
         public static void Convert(string inputFile, string outputFile, string libreOfficePath)
         {
-            string commandString="";
+            List<string> commandArgs = new List<string>();
             string convertedFile = "";
 
 
@@ -61,35 +62,36 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 Directory.CreateDirectory(tmpFolder);
             }
 
+            commandArgs.Add("--convert-to");
+
             if ((inputFile.EndsWith(".html") || inputFile.EndsWith(".htm")) && outputFile.EndsWith(".pdf"))
             {
-                commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --norestore --writer --headless --outdir {0}", tmpFolder, inputFile);
+                commandArgs.Add("pdf:writer_pdf_Export");
                 //commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --outdir {0}", System.IO.Path.GetDirectoryName(pdfFile), inputFile);
                 convertedFile =  Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
 
             }
             else if (inputFile.EndsWith(".docx") && outputFile.EndsWith(".pdf"))
             {
-                commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --norestore --writer --headless --outdir {0}",
-                    tmpFolder, inputFile);
+                commandArgs.Add("pdf:writer_pdf_Export");
                 convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
             }
             else if (inputFile.EndsWith(".docx") && (outputFile.EndsWith(".html") || outputFile.EndsWith(".htm")))
             {
-                commandString = String.Format("--convert-to html:HTML:EmbedImages  {1} --norestore --writer --headless --outdir {0}",
-                    tmpFolder, inputFile);
+                commandArgs.Add("html:HTML:EmbedImages" );
                 convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".html");
             }
             else if ((inputFile.EndsWith(".html") || inputFile.EndsWith(".htm")) && (outputFile.EndsWith(".docx")))
             {
-                commandString = String.Format("--convert-to docx:\"Office Open XML Text\"  {1} --norestore --writer --headless --outdir {0}",
-                    tmpFolder, inputFile);
+                commandArgs.Add("docx:\"Office Open XML Text\"");
                 convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".docx");
             }
 
+            commandArgs.AddRange(new []{ inputFile, "--norestore", "--writer", "--headless", "--outdir", tmpFolder });
 
             ProcessStartInfo procStartInfo =
-                new ProcessStartInfo(libreOfficePath, commandString);
+                new ProcessStartInfo(libreOfficePath);
+            foreach (var arg in commandArgs) {  procStartInfo.ArgumentList.Add((arg));}
             procStartInfo.RedirectStandardOutput = true;
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;

@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.1": {
-      "DocXToPdfConverter/1.0.0": {
+      "DocXToPdfConverter/1.0.2": {
         "dependencies": {
           "DocumentFormat.OpenXml": "2.10.0-beta0002",
           "System.Drawing.Common": "4.5.1"
@@ -78,7 +78,7 @@
     }
   },
   "libraries": {
-    "DocXToPdfConverter/1.0.0": {
+    "DocXToPdfConverter/1.0.2": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
