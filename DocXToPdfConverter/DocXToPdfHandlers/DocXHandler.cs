@@ -141,7 +141,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                     // where the text is inside a table cell --> this is the row we are searching for.
                     var textElement = document.Body.Descendants<Text>()
                         .FirstOrDefault(t =>
-                            t.Text == _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag &&
+                            t.Text.Contains(_rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag) &&
                             t.Ancestors<DocumentFormat.OpenXml.Wordprocessing.TableCell>().Any());
                     if (textElement != null)
                     {
@@ -204,8 +204,6 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                                 item.Value[j]);
 
                                         }
-
-                                        break;
                                     }
                                 }
 
