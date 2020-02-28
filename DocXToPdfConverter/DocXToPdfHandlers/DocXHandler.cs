@@ -80,7 +80,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                     {
                         if (text.Text.Contains(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag))
                         {
-                            if (replace.Value.Contains(_rep.NewLineTag))//If we have line breaks present
+                            if (!string.IsNullOrEmpty(replace.Value) && replace.Value.Contains(_rep.NewLineTag))//If we have line breaks present
                             {
                                 string[] repArray = replace.Value.Split(new string[] {_rep.NewLineTag}, StringSplitOptions.None);
 
@@ -109,7 +109,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                             }
                             else
                             {
-                                text.Text = text.Text.Replace(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag, replace.Value);
+                                text.Text = text.Text.Replace(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag, replace.Value ?? string.Empty);
 
                             }
                         }
@@ -138,14 +138,14 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 foreach (var trDict in _rep.TablePlaceholders) //Take a Row (one Dictionary) at a time
                 {
                     var trCol0 = trDict.First();
-                    // Find the text elements matching the search string 
+                    // Find the text elements matching one of the search strings
                     // where the text is inside a table cell --> these are the rows we are searching for.
                     var textElements =
                         doc.MainDocumentPart.Document.Body.Descendants<Text>()
                         .Concat(doc.MainDocumentPart.HeaderParts.SelectMany(h => h.Header.Descendants<Text>()))
                         .Concat(doc.MainDocumentPart.FooterParts.SelectMany(f => f.Footer.Descendants<Text>()))
                         .Where(t =>
-                            t.Text.Contains(_rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag) &&
+                            trDict.Keys.Select(key => _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag).Any(s => t.Text.Contains(s)) &&
                             t.Ancestors<DocumentFormat.OpenXml.Wordprocessing.TableCell>().Any());
 
                     // Loop through all found rows
