@@ -213,13 +213,12 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
                             }
 
-                            if (j < trCol0.Value.Length - 1)
-                            {
-                                tableRow.Parent.InsertAfter(tableRowCopy, tableRow);
-                                tableRow = tableRowCopy;
-                            }
-                            
+                            tableRow.Parent.InsertAfter(tableRowCopy, tableRow);
+                            tableRow = tableRowCopy;
                         }
+
+                        // Finally delete the last row as it is the one with the placeholders
+                        tableRow.Remove();
 
                     }
 
