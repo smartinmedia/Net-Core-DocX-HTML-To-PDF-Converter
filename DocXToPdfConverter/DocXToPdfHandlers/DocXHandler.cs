@@ -31,7 +31,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         {
             _docxMs = StreamHandler.GetFileAsMemoryStream(docXTemplateFilename);
             _rep = rep;
-            
+
         }
 
 
@@ -58,7 +58,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             return _docxMs;
         }
-       
+
 
         public MemoryStream ReplaceTexts()
         {
@@ -79,7 +79,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                         {
                             if (replace.Value.Contains(_rep.NewLineTag))//If we have line breaks present
                             {
-                                string[] repArray = replace.Value.Split(new string[] {_rep.NewLineTag}, StringSplitOptions.None);
+                                string[] repArray = replace.Value.Split(new string[] { _rep.NewLineTag }, StringSplitOptions.None);
 
                                 var lastInsertedText = text;
                                 var lastInsertedBreak = new Break();
@@ -168,7 +168,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                     {
                                         if (item.Value[j].Contains(_rep.NewLineTag)) //If we have line breaks present
                                         {
-                                            string[] repArray = item.Value[j].Split(new string[] {_rep.NewLineTag},
+                                            string[] repArray = item.Value[j].Split(new string[] { _rep.NewLineTag },
                                                 StringSplitOptions.None);
 
                                             var lastInsertedText = text;
@@ -209,17 +209,13 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                     }
                                 }
 
-
-
                             }
 
                             tableRow.Parent.InsertAfter(tableRowCopy, tableRow);
                             tableRow = tableRowCopy;
                         }
 
-                        // Finally delete the last row as it is the one with the placeholders
                         tableRow.Remove();
-
                     }
 
 
@@ -228,10 +224,10 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             }
             _docxMs.Position = 0;
             return _docxMs;
-            
+
         }
 
-        
+
         public MemoryStream ReplaceImages()
         {
             if (_rep.ImagePlaceholders.Count == 0 || _rep.ImagePlaceholders == null)
@@ -256,12 +252,12 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                             var newRunForImage = new Run();
                             //Break the texts into the part before and after image. Then create separate runs for them
                             var pos = text.Text.IndexOf(pl, StringComparison.CurrentCulture);
-                            
-                            if(text.Text.Length > pl.Length)
+
+                            if (text.Text.Length > pl.Length)
                             {
                                 if (pos == 0)
                                 {
-                                    var newAfterRun = (Run) run.Clone();
+                                    var newAfterRun = (Run)run.Clone();
                                     string afterText = text.Text.Substring(pl.Length, text.Text.Length - pl.Length);
                                     Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
                                     newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
@@ -303,7 +299,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
                             AppendImageToElement(replace, newRunForImage, doc);
 
-                            
+
                         }
 
                     }
@@ -322,12 +318,12 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             MainDocumentPart mainPart = wordprocessingDocument.MainDocumentPart;
 
             Uri imageUri = new Uri("/word/media/" +
-                                   placeholder.Key + _imageCounter + "."+ imageExtension, UriKind.Relative);
+                                   placeholder.Key + _imageCounter + "." + imageExtension, UriKind.Relative);
 
             // Create "image" part in /word/media
             // Change content type for other image types.
             PackagePart packageImagePart =
-                wordprocessingDocument.Package.CreatePart(imageUri, "Image/"+ imageExtension);
+                wordprocessingDocument.Package.CreatePart(imageUri, "Image/" + imageExtension);
 
 
             // Feed data.
@@ -346,12 +342,12 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             //AddImageToBody(wordprocessingDocument, imageRelationshipPart.Id);
 
-            
+
             var imgTmp = ImageHandler.GetImageFromStream(placeholder.Value.memStream);
 
             var drawing = GetImageElement(imageRelationshipPart.Id, placeholder.Key, "picture", imgTmp.Width, imgTmp.Height, placeholder.Value.Dpi);
             element.AppendChild(drawing);
-            
+
 
         }
 
@@ -383,7 +379,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                         new A.GraphicData(
                             new PIC.Picture(
                                 new PIC.NonVisualPictureProperties(
-                                    new PIC.NonVisualDrawingProperties { Id = (UInt32Value)0U, Name = fileName  },
+                                    new PIC.NonVisualDrawingProperties { Id = (UInt32Value)0U, Name = fileName },
                                     new PIC.NonVisualPictureDrawingProperties()),
                                 new PIC.BlipFill(
                                     new A.Blip(
