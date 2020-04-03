@@ -217,14 +217,11 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
                             }
 
-                            if (j < trCol0.Value.Length - 1)
-                            {
-                                tableRow.Parent.InsertAfter(tableRowCopy, tableRow);
-                                tableRow = tableRowCopy;
-                            }
-                            
+                            tableRow.Parent.InsertAfter(tableRowCopy, tableRow);
+                            tableRow = tableRowCopy;
                         }
 
+                        tableRow.Remove();
                     }
 
 
