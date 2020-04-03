@@ -69,15 +69,18 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             {
                 CleanMarkup(doc);
 
-                var document = doc.MainDocumentPart.Document;
+                // Search in body, headers and footers
+                var documentTexts = doc.MainDocumentPart.Document.Descendants<Text>();
+                var headerTexts = doc.MainDocumentPart.HeaderParts.SelectMany(h => h.Header.Descendants<Text>());
+                var footerTexts = doc.MainDocumentPart.FooterParts.SelectMany(f => f.Footer.Descendants<Text>());
 
-                foreach (var text in document.Descendants<Text>()) // <<< Here
+                foreach (var text in documentTexts.Concat(headerTexts).Concat(footerTexts)) // <<< Here
                 {
                     foreach (var replace in _rep.TextPlaceholders)
                     {
                         if (text.Text.Contains(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag))
                         {
-                            if (replace.Value.Contains(_rep.NewLineTag))//If we have line breaks present
+                            if (!string.IsNullOrEmpty(replace.Value) && replace.Value.Contains(_rep.NewLineTag))//If we have line breaks present
                             {
                                 string[] repArray = replace.Value.Split(new string[] {_rep.NewLineTag}, StringSplitOptions.None);
 
@@ -106,7 +109,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                             }
                             else
                             {
-                                text.Text = text.Text.Replace(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag, replace.Value);
+                                text.Text = text.Text.Replace(_rep.TextPlaceholderStartTag + replace.Key + _rep.TextPlaceholderEndTag, replace.Value ?? string.Empty);
 
                             }
                         }
@@ -132,18 +135,21 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
                 CleanMarkup(doc);
 
-                var document = doc.MainDocumentPart.Document;
-
                 foreach (var trDict in _rep.TablePlaceholders) //Take a Row (one Dictionary) at a time
                 {
                     var trCol0 = trDict.First();
-                    // Find the first text element matching the search string 
-                    // where the text is inside a table cell --> this is the row we are searching for.
-                    var textElement = document.Body.Descendants<Text>()
-                        .FirstOrDefault(t =>
-                            t.Text == _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag &&
+                    // Find the text elements matching one of the search strings
+                    // where the text is inside a table cell --> these are the rows we are searching for.
+                    var textElements =
+                        doc.MainDocumentPart.Document.Body.Descendants<Text>()
+                        .Concat(doc.MainDocumentPart.HeaderParts.SelectMany(h => h.Header.Descendants<Text>()))
+                        .Concat(doc.MainDocumentPart.FooterParts.SelectMany(f => f.Footer.Descendants<Text>()))
+                        .Where(t =>
+                            trDict.Keys.Select(key => _rep.TablePlaceholderStartTag + trCol0.Key + _rep.TablePlaceholderEndTag).Any(s => t.Text.Contains(s)) &&
                             t.Ancestors<DocumentFormat.OpenXml.Wordprocessing.TableCell>().Any());
-                    if (textElement != null)
+
+                    // Loop through all found rows
+                    foreach(var textElement in textElements)
                     {
                         var newTableRows = new List<TableRow>();
                         var tableRow = textElement.Ancestors<TableRow>().First();
@@ -204,8 +210,6 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                                 item.Value[j]);
 
                                         }
-
-                                        break;
                                     }
                                 }
 
