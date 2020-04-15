@@ -19,9 +19,8 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         { }
     }
 
-    public static class ConvertWithLibreOffice
+    public static class LibreOfficeWrapper
     {
-
 
         private static string GetLibreOfficePath()
         {
@@ -30,7 +29,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 case PlatformID.Unix:
                     return "/usr/bin/soffice";
                 case PlatformID.Win32NT:
-                    string binaryDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    string binaryDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                     return binaryDirectory + "\\Windows\\program\\soffice.exe";
                 default:
                     throw new PlatformNotSupportedException("Your OS is not supported");
@@ -89,22 +88,22 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             commandArgs.AddRange(new []{ inputFile, "--norestore", "--writer", "--headless", "--outdir", tmpFolder });
 
-            ProcessStartInfo procStartInfo =
-                new ProcessStartInfo(libreOfficePath);
-            foreach (var arg in commandArgs) {  procStartInfo.ArgumentList.Add((arg));}
+            var procStartInfo = new ProcessStartInfo(libreOfficePath);
+            foreach (var arg in commandArgs) { procStartInfo.ArgumentList.Add(arg); }
             procStartInfo.RedirectStandardOutput = true;
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;
             procStartInfo.WorkingDirectory = Environment.CurrentDirectory;
 
-            Process process = new Process() {StartInfo = procStartInfo,};
+            var process = new Process() { StartInfo = procStartInfo };
             Process[] pname = Process.GetProcessesByName("soffice");
 
             //Supposedly, only one instance of Libre Office can be run simultaneously
             while (pname.Length > 0)
             {
                 Thread.Sleep(5000);
-            }
+                pname = Process.GetProcessesByName("soffice");
+             }
 
             process.Start();
             process.WaitForExit();
@@ -119,17 +118,60 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 if (File.Exists(outputFile)) File.Delete(outputFile);
                 if (File.Exists(convertedFile))
                 {
-                    System.IO.File.Move(convertedFile, outputFile);
-                    
+                    File.Move(convertedFile, outputFile);
                 }
                 ClearDirectory(tmpFolder);
                 Directory.Delete(tmpFolder);
             }
-
         }
 
+        public static void Print(string inputFile, string printerName, string libreOfficePath)
+        {
+            var commandArgs = new List<string>();
 
-        private static void ClearDirectory(string folderName)
+            if (string.IsNullOrEmpty(libreOfficePath))
+            {
+                libreOfficePath = GetLibreOfficePath();
+            }
+
+            commandArgs.Add("-p");
+
+            if (! string.IsNullOrEmpty(printerName))
+         {
+            commandArgs.Add("-pt");
+            commandArgs.Add(printerName);
+         }
+
+         commandArgs.AddRange(new[] { inputFile, "--norestore", "--writer", "--headless" });
+
+         var procStartInfo = new ProcessStartInfo(libreOfficePath);
+         foreach (var arg in commandArgs) { procStartInfo.ArgumentList.Add(arg); }
+         procStartInfo.RedirectStandardOutput = true;
+         procStartInfo.UseShellExecute = false;
+         procStartInfo.CreateNoWindow = true;
+         procStartInfo.WorkingDirectory = Environment.CurrentDirectory;
+
+         var process = new Process() { StartInfo = procStartInfo };
+         Process[] pname = Process.GetProcessesByName("soffice");
+
+         //Supposedly, only one instance of Libre Office can be run simultaneously
+         while (pname.Length > 0)
+         {
+            Thread.Sleep(5000);
+            pname = Process.GetProcessesByName("soffice");
+         }
+
+         process.Start();
+         process.WaitForExit();
+
+         // Check for failed exit code.
+         if (process.ExitCode != 0)
+         {
+            throw new LibreOfficeFailedException(process.ExitCode);
+         }
+      }
+
+      private static void ClearDirectory(string folderName)
         {
             DirectoryInfo dir = new DirectoryInfo(folderName);
 
