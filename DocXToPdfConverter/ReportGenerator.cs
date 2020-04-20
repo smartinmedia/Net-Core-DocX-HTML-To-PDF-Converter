@@ -11,11 +11,8 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using DocXToPdfConverter.DocXToPdfHandlers;
-
 
  
 namespace DocXToPdfConverter
@@ -66,6 +63,27 @@ namespace DocXToPdfConverter
             }
         }
 
+        /// <summary>
+        /// Prints the file and optionally generates from placeholders
+        /// </summary>
+        /// <param name="templateFile">The input file. May be docx, html or pdf</param>
+        /// <param name="printerName">optional printername to print on. If this value is empty, the default printer is used</param>
+        /// <param name="rep">A collection of placeholders to be applied if the input file is docx or html.</param>
+        public void Print(string templateFile, string printerName = null, Placeholders rep = null)
+        {
+            if ((templateFile.EndsWith(".docx") || templateFile.EndsWith(".html") || templateFile.EndsWith(".htm")) && rep != null)
+            {
+                var tempFileToPrint = Path.GetTempFileName();
+                Convert(templateFile, tempFileToPrint, rep);
+                LibreOfficeWrapper.Print(tempFileToPrint, printerName, _locationOfLibreOfficeSoffice);
+                File.Delete(tempFileToPrint);
+            }
+            else
+            {
+                LibreOfficeWrapper.Print(templateFile, printerName, _locationOfLibreOfficeSoffice);
+            }
+        }
+
         //string docxSource = filename with path
         private void GenerateReportFromDocxToDocX(string docxSource, string docxTarget, Placeholders rep)
         {
@@ -81,7 +99,7 @@ namespace DocXToPdfConverter
             var ms = docx.ReplaceAll();
             var tmpFile = Path.Combine(Path.GetDirectoryName(pdfTarget), Path.GetFileNameWithoutExtension(pdfTarget) + Guid.NewGuid().ToString().Substring(0,10)+".docx");
             StreamHandler.WriteMemoryStreamToDisk(ms, tmpFile);
-            ConvertWithLibreOffice.Convert(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
+            LibreOfficeWrapper.Convert(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
             File.Delete(tmpFile);
         }
 
@@ -92,10 +110,9 @@ namespace DocXToPdfConverter
             var ms = docx.ReplaceAll();
             var tmpFile = Path.Combine(Path.GetDirectoryName(htmlTarget), Path.GetFileNameWithoutExtension(docxSource)+Guid.NewGuid().ToString().Substring(0,10) + ".docx");
             StreamHandler.WriteMemoryStreamToDisk(ms, tmpFile);
-            ConvertWithLibreOffice.Convert(tmpFile, htmlTarget, _locationOfLibreOfficeSoffice);
+            LibreOfficeWrapper.Convert(tmpFile, htmlTarget, _locationOfLibreOfficeSoffice);
             //PtConvertDocxToHtml.ConvertToHtml(tmpFile, htmlTargetDirectory);
             File.Delete(tmpFile);
-
         }
 
 
@@ -112,9 +129,8 @@ namespace DocXToPdfConverter
         {
             var tmpFile = Path.Combine(Path.GetDirectoryName(docxTarget), Path.GetFileNameWithoutExtension(htmlSource) + Guid.NewGuid().ToString().Substring(0, 10) + ".html");
             GenerateReportFromHtmlToHtml(htmlSource, tmpFile, rep);
-            ConvertWithLibreOffice.Convert(tmpFile, docxTarget, _locationOfLibreOfficeSoffice);
+            LibreOfficeWrapper.Convert(tmpFile, docxTarget, _locationOfLibreOfficeSoffice);
             File.Delete(tmpFile);
-
         }
 
 
@@ -124,9 +140,8 @@ namespace DocXToPdfConverter
         {
             var tmpFile = Path.Combine(Path.GetDirectoryName(pdfTarget), Path.GetFileNameWithoutExtension(htmlSource) + Guid.NewGuid().ToString().Substring(0, 10) + ".html");
             GenerateReportFromHtmlToHtml(htmlSource, tmpFile, rep);
-            ConvertWithLibreOffice.Convert(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
+            LibreOfficeWrapper.Convert(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
             File.Delete(tmpFile);
-
         }
 
 
