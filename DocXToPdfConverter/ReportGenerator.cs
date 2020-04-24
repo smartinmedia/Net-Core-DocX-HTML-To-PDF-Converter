@@ -19,7 +19,7 @@ namespace DocXToPdfConverter
 {
     public class ReportGenerator
     {
-        private string _locationOfLibreOfficeSoffice;
+        private readonly string _locationOfLibreOfficeSoffice;
 
         // If you dont need conversion to PDF, you can leave the LocationOfLibreOfficeSoffice empty 
         // For Windows users: this must point to the ".exe" file, so \Path\Path\soffice.exe
@@ -63,6 +63,7 @@ namespace DocXToPdfConverter
             }
         }
 
+
         /// <summary>
         /// Prints the file and optionally generates from placeholders
         /// </summary>
@@ -71,18 +72,49 @@ namespace DocXToPdfConverter
         /// <param name="rep">A collection of placeholders to be applied if the input file is docx or html.</param>
         public void Print(string templateFile, string printerName = null, Placeholders rep = null)
         {
-            if ((templateFile.EndsWith(".docx") || templateFile.EndsWith(".html") || templateFile.EndsWith(".htm")) && rep != null)
+            if (rep != null)
             {
-                var tempFileToPrint = Path.GetTempFileName();
-                Convert(templateFile, tempFileToPrint, rep);
-                LibreOfficeWrapper.Print(tempFileToPrint, printerName, _locationOfLibreOfficeSoffice);
-                File.Delete(tempFileToPrint);
+                if (templateFile.EndsWith(".docx"))
+                {
+                    PrintDocx(templateFile, printerName, rep);
+                }
+                else if( templateFile.EndsWith(".html") || templateFile.EndsWith(".htm"))
+                {
+                    PrintHtml(templateFile, printerName, rep);
+                }
+                else
+                {
+                    LibreOfficeWrapper.Print(templateFile, printerName, _locationOfLibreOfficeSoffice);
+                }
             }
             else
             {
                 LibreOfficeWrapper.Print(templateFile, printerName, _locationOfLibreOfficeSoffice);
             }
         }
+
+
+        private void PrintDocx(string templateFile, string printername, Placeholders rep)
+        {
+            var docx = new DocXHandler(templateFile, rep);
+            var ms = docx.ReplaceAll();
+            var tempFileToPrint = Path.ChangeExtension(Path.GetTempFileName(), ".docx");
+            StreamHandler.WriteMemoryStreamToDisk(ms, tempFileToPrint);
+            LibreOfficeWrapper.Print(tempFileToPrint, printername, _locationOfLibreOfficeSoffice);
+            File.Delete(tempFileToPrint);
+        }
+
+
+        private void PrintHtml(string templateFile, string printername, Placeholders rep)
+        {
+            var htmlContent = File.ReadAllText(templateFile);
+            htmlContent = HtmlHandler.ReplaceAll(htmlContent, rep);
+            var tempFileToPrint = Path.ChangeExtension(Path.GetTempFileName(), ".html");
+            File.WriteAllText(tempFileToPrint, htmlContent);
+            LibreOfficeWrapper.Print(tempFileToPrint, printername, _locationOfLibreOfficeSoffice);
+            File.Delete(tempFileToPrint);
+        }
+
 
         //string docxSource = filename with path
         private void GenerateReportFromDocxToDocX(string docxSource, string docxTarget, Placeholders rep)
@@ -91,6 +123,7 @@ namespace DocXToPdfConverter
             var ms = docx.ReplaceAll();
             StreamHandler.WriteMemoryStreamToDisk(ms, docxTarget);
         }
+
 
         ////string docxSource = filename with path
         private void GenerateReportFromDocxToPdf(string docxSource, string pdfTarget, Placeholders rep)
@@ -103,7 +136,7 @@ namespace DocXToPdfConverter
             File.Delete(tmpFile);
         }
 
-        
+
         private void GenerateReportFromDocxToHtml(string docxSource, string htmlTarget, Placeholders rep)
         {
             var docx = new DocXHandler(docxSource, rep);
