@@ -7,7 +7,7 @@
     <StartupObject />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>Dr. Martin Weihrauch</Authors>
     <Company>Smart In Media</Company>
     <Copyright>(c) Smart In Media</Copyright>
