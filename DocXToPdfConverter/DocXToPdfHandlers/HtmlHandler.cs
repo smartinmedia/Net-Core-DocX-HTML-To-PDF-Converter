@@ -26,6 +26,15 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             }
 
             /*
+             * Replace Hyperlinks
+             */
+            foreach(var hyperlink in _rep.HyperlinkPlaceholders)
+            {
+                html = html.Replace(_rep.HyperlinkPlaceholderStartTag + hyperlink.Key + _rep.HyperlinkPlaceholderEndTag,
+                    $"<a href=\"{hyperlink.Value.Link}\">{hyperlink.Value.Text}</a>");
+            }
+
+            /*
              * Replace images
              */
              foreach (var replace in _rep.ImagePlaceholders)

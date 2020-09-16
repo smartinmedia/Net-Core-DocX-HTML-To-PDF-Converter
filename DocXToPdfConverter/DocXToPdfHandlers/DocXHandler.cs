@@ -21,10 +21,9 @@ using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 namespace DocXToPdfConverter.DocXToPdfHandlers
 {
     public class DocXHandler
-
     {
-        private MemoryStream _docxMs;
-        private Placeholders _rep;
+        private readonly MemoryStream _docxMs;
+        private readonly Placeholders _rep;
         private int _imageCounter;
 
         public DocXHandler(string docXTemplateFilename, Placeholders rep)
@@ -39,19 +38,13 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         {
             if (_rep != null)
             {
-                if (_rep.TextPlaceholders.Count > 0)
-                {
-                    ReplaceTexts();
-                }
+                ReplaceTexts();
 
-                if (_rep.TablePlaceholders.Count > 0 && _rep.TablePlaceholders.First().Count > 0)
-                {
-                    ReplaceTableRows();
-                }
-                if (_rep.ImagePlaceholders.Count > 0)
-                {
-                    ReplaceImages();
-                }
+                ReplaceHyperlinks();
+
+                ReplaceTableRows();
+
+                ReplaceImages();
             }
 
             _docxMs.Position = 0;
@@ -62,10 +55,10 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
         public MemoryStream ReplaceTexts()
         {
-            if (_rep.TextPlaceholders.Count == 0 || _rep.TextPlaceholders == null)
+            if (_rep.TextPlaceholders == null || _rep.TextPlaceholders.Count == 0)
                 return null;
-            using (WordprocessingDocument doc =
-                WordprocessingDocument.Open(_docxMs, true))
+
+            using (var doc = WordprocessingDocument.Open(_docxMs, true))
             {
                 CleanMarkup(doc);
 
@@ -123,16 +116,99 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             return _docxMs;
         }
 
+        public MemoryStream ReplaceHyperlinks()
+        {
+            if (_rep.HyperlinkPlaceholders == null || _rep.HyperlinkPlaceholders.Count == 0)
+                return null;
+
+            using (var doc = WordprocessingDocument.Open(_docxMs, true))
+            {
+                CleanMarkup(doc);
+
+                // Search in body, headers and footers
+                var documentTexts = doc.MainDocumentPart.Document.Descendants<Text>();
+
+                foreach (var text in documentTexts)
+                {
+                    foreach (var replace in _rep.HyperlinkPlaceholders)
+                    {
+                        var pl = _rep.HyperlinkPlaceholderStartTag + replace.Key + _rep.HyperlinkPlaceholderEndTag;
+                        if (text.Text.Contains(pl))
+                        {
+                            var run = text.Ancestors<Run>().First();
+                            var newRunForHyperlink = new Run();
+
+                            if (text.Text.StartsWith(pl))
+                            {
+                                var newAfterRun = (Run)run.Clone();
+                                string afterText = text.Text.Substring(pl.Length, text.Text.Length - pl.Length);
+                                Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
+                                newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
+                                newAfterRunText.Text = afterText;
+
+                                run.Parent.InsertAfter(newAfterRun, run);
+                            }
+                            else if (text.Text.EndsWith(pl))
+                            {
+                                var newBeforeRun = (Run)run.Clone();
+                                string beforeText = text.Text.Substring(0, text.Text.Length - pl.Length);
+                                Text newBeforeRunText = newBeforeRun.GetFirstChild<Text>();
+                                newBeforeRunText.Space = SpaceProcessingModeValues.Preserve;
+                                newBeforeRunText.Text = beforeText;
+
+                                run.Parent.InsertBefore(newBeforeRun, run);
+                            }
+                            else
+                            {
+                                //Break the texts into the part before and after image. Then create separate runs for them
+                                var pos = text.Text.IndexOf(pl, StringComparison.CurrentCulture);
+
+                                var newBeforeRun = (Run)run.Clone();
+                                string beforeText = text.Text.Substring(0, pos);
+                                Text newBeforeRunText = newBeforeRun.GetFirstChild<Text>();
+                                newBeforeRunText.Space = SpaceProcessingModeValues.Preserve;
+                                newBeforeRunText.Text = beforeText;
+                                run.Parent.InsertBefore(newBeforeRun, run);
+
+                                var newAfterRun = (Run)run.Clone();
+                                string afterText = text.Text.Substring(pos + pl.Length, text.Text.Length - pos - pl.Length);
+                                Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
+                                newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
+                                newAfterRunText.Text = afterText;
+                                run.Parent.InsertAfter(newAfterRun, run);
+                            }
+
+                            var relation = doc.MainDocumentPart.AddHyperlinkRelationship(new Uri(replace.Value.Link, UriKind.RelativeOrAbsolute), true);
+                            string relationid = relation.Id;
+                            var linkText = string.IsNullOrEmpty(replace.Value.Text) ? replace.Value.Link : replace.Value.Text;
+                            var hyper =
+                                new Hyperlink(
+                                    new Run(
+                                        new RunProperties(new RunStyle() { Val = "Hyperlink" }),
+                                        new Text(linkText)))
+                                {
+                                    Id = relationid,
+                                    History = OnOffValue.FromBoolean(true)
+                                };
+                            
+                            run.Parent.InsertBefore(hyper, run);
+                            run.Remove();
+                        }
+                    }
+                }
+            }
+
+            _docxMs.Position = 0;
+            return _docxMs;
+        }
 
         public MemoryStream ReplaceTableRows()
         {
-            if (_rep.TablePlaceholders.Count == 0 || _rep.TablePlaceholders == null)
+            if (_rep.TablePlaceholders == null || _rep.TablePlaceholders.Count == 0)
                 return null;
 
-            using (WordprocessingDocument doc =
-                WordprocessingDocument.Open(_docxMs, true))
+            using (var doc = WordprocessingDocument.Open(_docxMs, true))
             {
-
                 CleanMarkup(doc);
 
                 foreach (var trDict in _rep.TablePlaceholders) //Take a Row (one Dictionary) at a time
@@ -154,14 +230,12 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                         var newTableRows = new List<TableRow>();
                         var tableRow = textElement.Ancestors<TableRow>().First();
 
-
                         for (var j = 0; j < trCol0.Value.Length; j++) //Lets create row by row and replace placeholders
                         {
                             newTableRows.Add((TableRow)tableRow.CloneNode(true));
                             var tableRowCopy = newTableRows[newTableRows.Count - 1];
 
-                            foreach (var text in tableRow.Descendants<Text>()
-                            ) //Cycle through the cells of the row to replace from the Dictionary value ( string array)
+                            foreach (var text in tableRow.Descendants<Text>()) //Cycle through the cells of the row to replace from the Dictionary value ( string array)
                             {
                                 for (var index = 0;
                                     index < trDict.Count;
@@ -169,8 +243,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                 {
                                     var item = trDict.ElementAt(index);
 
-                                    if (text.Text.Contains(_rep.TablePlaceholderStartTag + item.Key +
-                                                           _rep.TablePlaceholderEndTag))
+                                    if (text.Text.Contains(_rep.TablePlaceholderStartTag + item.Key + _rep.TablePlaceholderEndTag))
                                     {
                                         if (item.Value[j].Contains(_rep.NewLineTag)) //If we have line breaks present
                                         {
@@ -188,7 +261,6 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                                     text.Text = text.Text.Replace(
                                                         _rep.TablePlaceholderStartTag + item.Key +
                                                         _rep.TablePlaceholderEndTag, repArray[i]);
-
                                                 }
                                                 else
                                                 {
@@ -199,22 +271,16 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                                     text.Parent.InsertAfter(tmpText, lastInsertedBreak);
                                                     lastInsertedText = tmpText;
                                                 }
-
                                             }
-
                                         }
                                         else
                                         {
                                             text.Text = text.Text.Replace(
                                                 _rep.TablePlaceholderStartTag + item.Key + _rep.TablePlaceholderEndTag,
                                                 item.Value[j]);
-
                                         }
                                     }
                                 }
-
-
-
                             }
 
                             tableRow.Parent.InsertAfter(tableRowCopy, tableRow);
@@ -224,29 +290,26 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                         tableRow.Remove();
                     }
 
-
                 }
 
             }
             _docxMs.Position = 0;
-            return _docxMs;
-            
+            return _docxMs;           
         }
 
         
         public MemoryStream ReplaceImages()
         {
-            if (_rep.ImagePlaceholders.Count == 0 || _rep.ImagePlaceholders == null)
+            if (_rep.ImagePlaceholders == null || _rep.ImagePlaceholders.Count == 0)
                 return null;
 
-            using (WordprocessingDocument doc =
-                WordprocessingDocument.Open(_docxMs, true))
+            using (var doc = WordprocessingDocument.Open(_docxMs, true))
             {
                 CleanMarkup(doc);
 
-                var document = doc.MainDocumentPart.Document;
+                var documentTexts = doc.MainDocumentPart.Document.Descendants<Text>();
 
-                foreach (var text in document.Descendants<Text>()) // <<< Here
+                foreach (var text in documentTexts)
                 {
                     foreach (var replace in _rep.ImagePlaceholders)
                     {
@@ -258,54 +321,48 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                             var newRunForImage = new Run();
                             //Break the texts into the part before and after image. Then create separate runs for them
                             var pos = text.Text.IndexOf(pl, StringComparison.CurrentCulture);
-                            
-                            if(text.Text.Length > pl.Length)
+
+                            if (pos == 0)
                             {
-                                if (pos == 0)
-                                {
-                                    var newAfterRun = (Run) run.Clone();
-                                    string afterText = text.Text.Substring(pl.Length, text.Text.Length - pl.Length);
-                                    Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
-                                    newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
-                                    newAfterRunText.Text = afterText;
+                                var newAfterRun = (Run)run.Clone();
+                                string afterText = text.Text.Substring(pl.Length, text.Text.Length - pl.Length);
+                                Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
+                                newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
+                                newAfterRunText.Text = afterText;
 
-                                    run.Parent.InsertAfter(newAfterRun, run);
-                                }
-                                else if (text.Text.EndsWith(pl))
-                                {
-                                    var newBeforeRun = (Run)run.Clone();
-                                    string beforeText = text.Text.Substring(0, pos);
-                                    Text newBeforeRunText = newBeforeRun.GetFirstChild<Text>();
-                                    newBeforeRunText.Space = SpaceProcessingModeValues.Preserve;
-                                    newBeforeRunText.Text = beforeText;
+                                run.Parent.InsertAfter(newAfterRun, run);
+                            }
+                            else if (text.Text.EndsWith(pl))
+                            {
+                                var newBeforeRun = (Run)run.Clone();
+                                string beforeText = text.Text.Substring(0, pos);
+                                Text newBeforeRunText = newBeforeRun.GetFirstChild<Text>();
+                                newBeforeRunText.Space = SpaceProcessingModeValues.Preserve;
+                                newBeforeRunText.Text = beforeText;
 
-                                    run.Parent.InsertBefore(newBeforeRun, run);
-                                }
-                                else
-                                {
-                                    var newBeforeRun = (Run)run.Clone();
-                                    string beforeText = text.Text.Substring(0, pos);
-                                    Text newBeforeRunText = newBeforeRun.GetFirstChild<Text>();
-                                    newBeforeRunText.Space = SpaceProcessingModeValues.Preserve;
-                                    newBeforeRunText.Text = beforeText;
-                                    run.Parent.InsertBefore(newBeforeRun, run);
+                                run.Parent.InsertBefore(newBeforeRun, run);
+                            }
+                            else
+                            {
+                                var newBeforeRun = (Run)run.Clone();
+                                string beforeText = text.Text.Substring(0, pos);
+                                Text newBeforeRunText = newBeforeRun.GetFirstChild<Text>();
+                                newBeforeRunText.Space = SpaceProcessingModeValues.Preserve;
+                                newBeforeRunText.Text = beforeText;
+                                run.Parent.InsertBefore(newBeforeRun, run);
 
-                                    var newAfterRun = (Run)run.Clone();
-                                    string afterText = text.Text.Substring(pos + pl.Length, text.Text.Length - pos - pl.Length);
-                                    Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
-                                    newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
-                                    newAfterRunText.Text = afterText;
-                                    run.Parent.InsertAfter(newAfterRun, run);
-                                }
+                                var newAfterRun = (Run)run.Clone();
+                                string afterText = text.Text.Substring(pos + pl.Length, text.Text.Length - pos - pl.Length);
+                                Text newAfterRunText = newAfterRun.GetFirstChild<Text>();
+                                newAfterRunText.Space = SpaceProcessingModeValues.Preserve;
+                                newAfterRunText.Text = afterText;
+                                run.Parent.InsertAfter(newAfterRun, run);
                             }
 
                             run.Parent.InsertBefore(newRunForImage, run);
                             run.Remove();
 
-
-                            AppendImageToElement(replace, newRunForImage, doc);
-
-                            
+                            AppendImageToElement(replace, newRunForImage, doc);                        
                         }
 
                     }
@@ -323,38 +380,28 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             MainDocumentPart mainPart = wordprocessingDocument.MainDocumentPart;
 
-            Uri imageUri = new Uri("/word/media/" +
-                                   placeholder.Key + _imageCounter + "."+ imageExtension, UriKind.Relative);
+            var imageUri = new Uri($"/word/media/{placeholder.Key}{_imageCounter}.{imageExtension}", UriKind.Relative);
 
             // Create "image" part in /word/media
             // Change content type for other image types.
-            PackagePart packageImagePart =
-                wordprocessingDocument.Package.CreatePart(imageUri, "Image/"+ imageExtension);
-
+            PackagePart packageImagePart = wordprocessingDocument.Package.CreatePart(imageUri, "Image/"+ imageExtension);
 
             // Feed data.
             placeholder.Value.memStream.Position = 0;
-            byte[] imageBytes = placeholder.Value.memStream.ToArray();// File.ReadAllBytes(fileName);
+            byte[] imageBytes = placeholder.Value.memStream.ToArray();
             packageImagePart.GetStream().Write(imageBytes, 0, imageBytes.Length);
 
-            PackagePart documentPackagePart =
-                mainPart.OpenXmlPackage.Package.GetPart(new Uri("/word/document.xml", UriKind.Relative));
+            PackagePart documentPackagePart = mainPart.OpenXmlPackage.Package.GetPart(new Uri("/word/document.xml", UriKind.Relative));
 
             // URI to the image is relative to relationship document.
             PackageRelationship imageRelationshipPart = documentPackagePart.CreateRelationship(
                 new Uri("media/" + placeholder.Key + _imageCounter + "." + imageExtension, UriKind.Relative),
                 TargetMode.Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
 
-
-            //AddImageToBody(wordprocessingDocument, imageRelationshipPart.Id);
-
-            
             var imgTmp = ImageHandler.GetImageFromStream(placeholder.Value.memStream);
 
             var drawing = GetImageElement(imageRelationshipPart.Id, placeholder.Key, "picture", imgTmp.Width, imgTmp.Height, placeholder.Value.Dpi);
             element.AppendChild(drawing);
-            
-
         }
 
 
@@ -420,7 +467,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         {
             //REMOVE THESE Markups, because they break up the text into multiple pieces, 
             //thereby preventing simple search and replace
-            SimplifyMarkupSettings settings = new SimplifyMarkupSettings
+            var settings = new SimplifyMarkupSettings
             {
                 RemoveComments = true,
                 RemoveContentControls = true,

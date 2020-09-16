@@ -12,7 +12,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 
 
 namespace DocXToPdfConverter
@@ -23,25 +22,27 @@ namespace DocXToPdfConverter
 
         public Placeholders()
         {
-            this.NewLineTag = "<br/>";
-            this.TextPlaceholderStartTag = "##";
-            this.TextPlaceholderEndTag = "##";
-            this.TablePlaceholderStartTag = "==";
-            this.TablePlaceholderEndTag = "==";
-            this.ImagePlaceholderStartTag = "++";
-            this.ImagePlaceholderEndTag = "++";
+            NewLineTag = "<br/>";
+            TextPlaceholderStartTag = "##";
+            TextPlaceholderEndTag = "##";
+            TablePlaceholderStartTag = "==";
+            TablePlaceholderEndTag = "==";
+            ImagePlaceholderStartTag = "++";
+            ImagePlaceholderEndTag = "++";
+            HyperlinkPlaceholderStartTag = "//";
+            HyperlinkPlaceholderEndTag = "//";
 
-            this.TextPlaceholders = new Dictionary<string, string>();
-            this.TablePlaceholders = new List<Dictionary<string, string[]>>();
-            this.ImagePlaceholders = new Dictionary<string, ImageElement>();
+            TextPlaceholders = new Dictionary<string, string>();
+            TablePlaceholders = new List<Dictionary<string, string[]>>();
+            ImagePlaceholders = new Dictionary<string, ImageElement>();
+            HyperlinkPlaceholders = new Dictionary<string, HyperlinkElement>();
         }
 
 
-
-        //NewLineTags are important only for .docx as input. If you use .html as input, then just use "<br
-
+        /// <summary>
+        /// NewLineTags are important only for .docx as input. If you use .html as input, then just use "<br/>"
+        /// </summary>
         public string NewLineTag { get; set; }
-
 
 
         //Start and End Tags can e. g. be both "##"
@@ -76,11 +77,26 @@ namespace DocXToPdfConverter
         public string ImagePlaceholderEndTag { get; set; }
 
         public Dictionary<string, ImageElement> ImagePlaceholders { get; set; }
+
+
+        /*
+         * Hyperlink replacements
+         */
+        public string HyperlinkPlaceholderStartTag { get; set; }
+        public string HyperlinkPlaceholderEndTag { get; set; }
+
+        public Dictionary<string, HyperlinkElement> HyperlinkPlaceholders { get; set; }
     }
 
     public class ImageElement
     {
         public MemoryStream memStream { get; set; }
         public double Dpi { get; set; } // Dots per inch
+    }
+
+    public class HyperlinkElement
+    {
+        public string Link { get; set; }
+        public string Text { get; set; }
     }
 }

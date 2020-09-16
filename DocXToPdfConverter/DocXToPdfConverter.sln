@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocXToPdfConverter", "DocXToPdfConverter.csproj", "{73ECDD18-0B0A-480E-A5C9-5B8A865F1E0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApplication", "..\ExampleApplication\ExampleApplication.csproj", "{2936F6E2-F433-4BF3-A1B3-958754AE99D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleApplication", "..\ExampleApplication\ExampleApplication.csproj", "{2936F6E2-F433-4BF3-A1B3-958754AE99D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2C65CCD7-FA18-4422-8AEC-83C1F068BD95}"
+	ProjectSection(SolutionItems) = preProject
+		..\.editorconfig = ..\.editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
