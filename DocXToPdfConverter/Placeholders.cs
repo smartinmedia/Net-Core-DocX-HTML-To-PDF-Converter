@@ -16,7 +16,7 @@ using System.IO;
 
 namespace DocXToPdfConverter
 {
-    
+
     public class Placeholders
     {
 
@@ -50,7 +50,7 @@ namespace DocXToPdfConverter
         public string TextPlaceholderStartTag { get; set; }
         public string TextPlaceholderEndTag { get; set; }
 
-        public Dictionary<string,string> TextPlaceholders { get; set; }
+        public Dictionary<string, string> TextPlaceholders { get; set; }
 
         /*
          * For tables it works that way:
@@ -71,8 +71,7 @@ namespace DocXToPdfConverter
          * Allowed file types: JPEG/JPG, BMP, TIFF, GIF, PNG
          */
 
-        //Take different replacement tags here, else there may be collision with the text replacements,
-        //e. g. "++" 
+        // Take different replacement tags here, else there may be collision with the text replacements, e. g. "++" 
         public string ImagePlaceholderStartTag { get; set; }
         public string ImagePlaceholderEndTag { get; set; }
 
@@ -90,7 +89,7 @@ namespace DocXToPdfConverter
 
     public class ImageElement
     {
-        public MemoryStream memStream { get; set; }
+        public MemoryStream MemStream { get; set; }
         public double Dpi { get; set; } // Dots per inch
     }
 

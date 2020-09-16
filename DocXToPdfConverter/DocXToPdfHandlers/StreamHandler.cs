@@ -2,7 +2,7 @@
 
 namespace DocXToPdfConverter.DocXToPdfHandlers
 {
-    public class StreamHandler
+    public static class StreamHandler
     {
         public static MemoryStream GetFileAsMemoryStream(string filename)
         {

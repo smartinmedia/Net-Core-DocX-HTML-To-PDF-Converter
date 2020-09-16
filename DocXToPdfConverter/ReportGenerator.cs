@@ -14,7 +14,7 @@ using System;
 using System.IO;
 using DocXToPdfConverter.DocXToPdfHandlers;
 
- 
+
 namespace DocXToPdfConverter
 {
     public class ReportGenerator
@@ -40,7 +40,7 @@ namespace DocXToPdfConverter
                 {
                     GenerateReportFromDocxToPdf(inputFile, outputFile, rep);
                 }
-                else if(outputFile.EndsWith(".html") || outputFile.EndsWith(".htm"))
+                else if (outputFile.EndsWith(".html") || outputFile.EndsWith(".htm"))
                 {
                     GenerateReportFromDocxToHtml(inputFile, outputFile, rep);
                 }
@@ -53,7 +53,7 @@ namespace DocXToPdfConverter
                 }
                 else if (outputFile.EndsWith(".docx"))
                 {
-                    
+
                     GenerateReportFromHtmlToDocx(inputFile, outputFile, rep);
                 }
                 else if (outputFile.EndsWith(".pdf"))
@@ -78,7 +78,7 @@ namespace DocXToPdfConverter
                 {
                     PrintDocx(templateFile, printerName, rep);
                 }
-                else if( templateFile.EndsWith(".html") || templateFile.EndsWith(".htm"))
+                else if (templateFile.EndsWith(".html") || templateFile.EndsWith(".htm"))
                 {
                     PrintHtml(templateFile, printerName, rep);
                 }
@@ -130,7 +130,7 @@ namespace DocXToPdfConverter
         {
             var docx = new DocXHandler(docxSource, rep);
             var ms = docx.ReplaceAll();
-            var tmpFile = Path.Combine(Path.GetDirectoryName(pdfTarget), Path.GetFileNameWithoutExtension(pdfTarget) + Guid.NewGuid().ToString().Substring(0,10)+".docx");
+            var tmpFile = Path.Combine(Path.GetDirectoryName(pdfTarget), Path.GetFileNameWithoutExtension(pdfTarget) + Guid.NewGuid().ToString().Substring(0, 10) + ".docx");
             StreamHandler.WriteMemoryStreamToDisk(ms, tmpFile);
             LibreOfficeWrapper.Convert(tmpFile, pdfTarget, _locationOfLibreOfficeSoffice);
             File.Delete(tmpFile);
@@ -141,10 +141,9 @@ namespace DocXToPdfConverter
         {
             var docx = new DocXHandler(docxSource, rep);
             var ms = docx.ReplaceAll();
-            var tmpFile = Path.Combine(Path.GetDirectoryName(htmlTarget), Path.GetFileNameWithoutExtension(docxSource)+Guid.NewGuid().ToString().Substring(0,10) + ".docx");
+            var tmpFile = Path.Combine(Path.GetDirectoryName(htmlTarget), Path.GetFileNameWithoutExtension(docxSource) + Guid.NewGuid().ToString().Substring(0, 10) + ".docx");
             StreamHandler.WriteMemoryStreamToDisk(ms, tmpFile);
             LibreOfficeWrapper.Convert(tmpFile, htmlTarget, _locationOfLibreOfficeSoffice);
-            //PtConvertDocxToHtml.ConvertToHtml(tmpFile, htmlTargetDirectory);
             File.Delete(tmpFile);
         }
 

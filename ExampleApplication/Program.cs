@@ -18,11 +18,11 @@ using DocXToPdfConverter.DocXToPdfHandlers;
 
 namespace ExampleApplication
 {
-    static class Program
+    public static class Program
     {
+
         public static void Main(string[] args)
         {
-
             /*
              * Your TODO:
              * 1. Enter your LibreOffice path below
@@ -32,7 +32,6 @@ namespace ExampleApplication
              * Possible conversions: from HTML or from DOCX to PDF, HTML, DOCX
              *
              */
-
 
             //Enter the location of your LibreOffice soffice.exe below, full path with "soffice.exe" at the end
             //or anything you have in Linux...
@@ -122,15 +121,14 @@ namespace ExampleApplication
 
             var qrImage = StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "QRCode.PNG"));
 
-            var productImageElement = new ImageElement() { Dpi = 96, memStream = productImage };
-            var qrImageElement = new ImageElement() { Dpi = 300, memStream = qrImage };
+            var productImageElement = new ImageElement() { Dpi = 96, MemStream = productImage };
+            var qrImageElement = new ImageElement() { Dpi = 300, MemStream = qrImage };
 
             placeholders.ImagePlaceholders = new Dictionary<string, ImageElement>
             {
                 {"QRCode", qrImageElement },
                 {"ProductImage", productImageElement }
             };
-
 
             /*
              *

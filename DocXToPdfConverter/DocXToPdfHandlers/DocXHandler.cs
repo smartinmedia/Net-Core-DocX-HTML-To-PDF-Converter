@@ -30,7 +30,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         {
             _docxMs = StreamHandler.GetFileAsMemoryStream(docXTemplateFilename);
             _rep = rep;
-            
+
         }
 
 
@@ -51,7 +51,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             return _docxMs;
         }
-       
+
 
         public MemoryStream ReplaceTexts()
         {
@@ -75,10 +75,10 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                         {
                             if (!string.IsNullOrEmpty(replace.Value) && replace.Value.Contains(_rep.NewLineTag))//If we have line breaks present
                             {
-                                string[] repArray = replace.Value.Split(new string[] {_rep.NewLineTag}, StringSplitOptions.None);
+                                string[] repArray = replace.Value.Split(new string[] { _rep.NewLineTag }, StringSplitOptions.None);
 
                                 var lastInsertedText = text;
-                                var lastInsertedBreak = new Break();
+                                Break lastInsertedBreak;
 
                                 for (var i = 0; i < repArray.Length; i++)
                                 {
@@ -136,7 +136,6 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                         if (text.Text.Contains(pl))
                         {
                             var run = text.Ancestors<Run>().First();
-                            var newRunForHyperlink = new Run();
 
                             if (text.Text.StartsWith(pl))
                             {
@@ -190,7 +189,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                     Id = relationid,
                                     History = OnOffValue.FromBoolean(true)
                                 };
-                            
+
                             run.Parent.InsertBefore(hyper, run);
                             run.Remove();
                         }
@@ -225,7 +224,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                             t.Ancestors<DocumentFormat.OpenXml.Wordprocessing.TableCell>().Any());
 
                     // Loop through all found rows
-                    foreach(var textElement in textElements)
+                    foreach (var textElement in textElements)
                     {
                         var newTableRows = new List<TableRow>();
                         var tableRow = textElement.Ancestors<TableRow>().First();
@@ -247,11 +246,11 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                                     {
                                         if (item.Value[j].Contains(_rep.NewLineTag)) //If we have line breaks present
                                         {
-                                            string[] repArray = item.Value[j].Split(new string[] {_rep.NewLineTag},
+                                            string[] repArray = item.Value[j].Split(new string[] { _rep.NewLineTag },
                                                 StringSplitOptions.None);
 
                                             var lastInsertedText = text;
-                                            var lastInsertedBreak = new Break();
+                                            Break lastInsertedBreak;
 
                                             for (var i = 0; i < repArray.Length; i++)
                                             {
@@ -294,10 +293,10 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             }
             _docxMs.Position = 0;
-            return _docxMs;           
+            return _docxMs;
         }
 
-        
+
         public MemoryStream ReplaceImages()
         {
             if (_rep.ImagePlaceholders == null || _rep.ImagePlaceholders.Count == 0)
@@ -362,7 +361,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                             run.Parent.InsertBefore(newRunForImage, run);
                             run.Remove();
 
-                            AppendImageToElement(replace, newRunForImage, doc);                        
+                            AppendImageToElement(replace, newRunForImage, doc);
                         }
 
                     }
@@ -376,7 +375,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
         private void AppendImageToElement(KeyValuePair<string, ImageElement> placeholder, OpenXmlElement element, WordprocessingDocument wordprocessingDocument)
         {
-            string imageExtension = ImageHandler.GetImageTypeFromMemStream(placeholder.Value.memStream);
+            string imageExtension = placeholder.Value.MemStream.GetImageType();
 
             MainDocumentPart mainPart = wordprocessingDocument.MainDocumentPart;
 
@@ -384,11 +383,11 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             // Create "image" part in /word/media
             // Change content type for other image types.
-            PackagePart packageImagePart = wordprocessingDocument.Package.CreatePart(imageUri, "Image/"+ imageExtension);
+            PackagePart packageImagePart = wordprocessingDocument.Package.CreatePart(imageUri, "Image/" + imageExtension);
 
             // Feed data.
-            placeholder.Value.memStream.Position = 0;
-            byte[] imageBytes = placeholder.Value.memStream.ToArray();
+            placeholder.Value.MemStream.Position = 0;
+            byte[] imageBytes = placeholder.Value.MemStream.ToArray();
             packageImagePart.GetStream().Write(imageBytes, 0, imageBytes.Length);
 
             PackagePart documentPackagePart = mainPart.OpenXmlPackage.Package.GetPart(new Uri("/word/document.xml", UriKind.Relative));
@@ -398,7 +397,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 new Uri("media/" + placeholder.Key + _imageCounter + "." + imageExtension, UriKind.Relative),
                 TargetMode.Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
 
-            var imgTmp = ImageHandler.GetImageFromStream(placeholder.Value.memStream);
+            var imgTmp = placeholder.Value.MemStream.GetImage();
 
             var drawing = GetImageElement(imageRelationshipPart.Id, placeholder.Key, "picture", imgTmp.Width, imgTmp.Height, placeholder.Value.Dpi);
             element.AppendChild(drawing);
@@ -432,7 +431,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                         new A.GraphicData(
                             new PIC.Picture(
                                 new PIC.NonVisualPictureProperties(
-                                    new PIC.NonVisualDrawingProperties { Id = (UInt32Value)0U, Name = fileName  },
+                                    new PIC.NonVisualDrawingProperties { Id = (UInt32Value)0U, Name = fileName },
                                     new PIC.NonVisualPictureDrawingProperties()),
                                 new PIC.BlipFill(
                                     new A.Blip(

@@ -9,77 +9,80 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
     public static class ImageHandler
     {
 
-        public static Image GetImageFromStream(MemoryStream ms)
+        public static Image GetImage(this MemoryStream ms)
         {
             ms.Position = 0;
-            var image = System.Drawing.Image.FromStream(ms);
+            var image = Image.FromStream(ms);
             ms.Position = 0;
             return image;
         }
 
-        public static ImagePartType GetImagePartTypeFromMemStream(MemoryStream stream)
+        public static ImagePartType GetImagePartType(this MemoryStream stream)
         {
             stream.Position = 0;
-            var image = Image.FromStream(stream);
-            stream.Position = 0;
-
-
-            if (ImageFormat.Jpeg.Equals(image.RawFormat))
+            using (var image = Image.FromStream(stream))
             {
+                stream.Position = 0;
+
+
+                if (ImageFormat.Jpeg.Equals(image.RawFormat))
+                {
+                    return ImagePartType.Jpeg;
+                }
+                else if (ImageFormat.Png.Equals(image.RawFormat))
+                {
+                    return ImagePartType.Png;
+                }
+                else if (ImageFormat.Gif.Equals(image.RawFormat))
+                {
+                    return ImagePartType.Gif;
+                }
+                else if (ImageFormat.Bmp.Equals(image.RawFormat))
+                {
+                    return ImagePartType.Bmp;
+                }
+                else if (ImageFormat.Tiff.Equals(image.RawFormat))
+                {
+                    return ImagePartType.Tiff;
+                }
+
                 return ImagePartType.Jpeg;
             }
-            else if (ImageFormat.Png.Equals(image.RawFormat))
-            {
-                return ImagePartType.Png;
-            }
-            else if (ImageFormat.Gif.Equals(image.RawFormat))
-            {
-                return ImagePartType.Gif;
-            }
-            else if (ImageFormat.Bmp.Equals(image.RawFormat))
-            {
-                return ImagePartType.Bmp;
-            }
-            else if (ImageFormat.Tiff.Equals(image.RawFormat))
-            {
-                return ImagePartType.Tiff;
-            }
-
-            return ImagePartType.Jpeg;
         }
 
-        public static string GetImageTypeFromMemStream(MemoryStream stream)
+        public static string GetImageType(this MemoryStream stream)
         {
             stream.Position = 0;
-            var image = Image.FromStream(stream);
-            stream.Position = 0;
+            using (var image = Image.FromStream(stream))
+            {
+                stream.Position = 0;
 
+                if (ImageFormat.Jpeg.Equals(image.RawFormat))
+                {
+                    return "jpeg";
+                }
+                else if (ImageFormat.Png.Equals(image.RawFormat))
+                {
+                    return "png";
+                }
+                else if (ImageFormat.Gif.Equals(image.RawFormat))
+                {
+                    return "gif";
+                }
+                else if (ImageFormat.Bmp.Equals(image.RawFormat))
+                {
+                    return "bmp";
+                }
+                else if (ImageFormat.Tiff.Equals(image.RawFormat))
+                {
+                    return "tiff";
+                }
 
-            if (ImageFormat.Jpeg.Equals(image.RawFormat))
-            {
-                return "jpeg";
+                return "";
             }
-            else if (ImageFormat.Png.Equals(image.RawFormat))
-            {
-                return "png";
-            }
-            else if (ImageFormat.Gif.Equals(image.RawFormat))
-            {
-                return "gif";
-            }
-            else if (ImageFormat.Bmp.Equals(image.RawFormat))
-            {
-                return "bmp";
-            }
-            else if (ImageFormat.Tiff.Equals(image.RawFormat))
-            {
-                return "tiff";
-            }
-
-            return "";
         }
 
-        public static string GetBase64FromMemStream(MemoryStream stream)
+        public static string GetBase64(this MemoryStream stream)
         {
             byte[] imageBytes = stream.ToArray();
 
