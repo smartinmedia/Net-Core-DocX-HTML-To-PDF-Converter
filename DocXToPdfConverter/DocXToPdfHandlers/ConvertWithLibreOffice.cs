@@ -45,17 +45,16 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
         public static void Convert(string inputFile, string outputFile, string libreOfficePath)
         {
-            List<string> commandArgs = new List<string>();
+            var commandArgs = new List<string>();
             string convertedFile = "";
 
-
-            if (libreOfficePath == "")
+            if (string.IsNullOrEmpty(libreOfficePath))
             {
                 libreOfficePath = GetLibreOfficePath();
             }
 
             //Create tmp folder
-            var tmpFolder = Path.Combine(Path.GetDirectoryName(outputFile), "DocXHtmlToPdfConverterTmp"+Guid.NewGuid().ToString().Substring(0, 10));
+            var tmpFolder = Path.Combine(Path.GetDirectoryName(outputFile), "DocXHtmlToPdfConverterTmp" + Guid.NewGuid().ToString().Substring(0, 10));
             if (!Directory.Exists(tmpFolder))
             {
                 Directory.CreateDirectory(tmpFolder);
@@ -66,9 +65,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             if ((inputFile.EndsWith(".html") || inputFile.EndsWith(".htm")) && outputFile.EndsWith(".pdf"))
             {
                 commandArgs.Add("pdf:writer_pdf_Export");
-                //commandString = String.Format("--convert-to pdf:writer_pdf_Export {1} --outdir {0}", System.IO.Path.GetDirectoryName(pdfFile), inputFile);
-                convertedFile =  Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
-
+                convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".pdf");
             }
             else if (inputFile.EndsWith(".docx") && outputFile.EndsWith(".pdf"))
             {
@@ -77,7 +74,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             }
             else if (inputFile.EndsWith(".docx") && (outputFile.EndsWith(".html") || outputFile.EndsWith(".htm")))
             {
-                commandArgs.Add("html:HTML:EmbedImages" );
+                commandArgs.Add("html:HTML:EmbedImages");
                 convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".html");
             }
             else if ((inputFile.EndsWith(".html") || inputFile.EndsWith(".htm")) && (outputFile.EndsWith(".docx")))
@@ -86,7 +83,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                 convertedFile = Path.Combine(tmpFolder, Path.GetFileNameWithoutExtension(inputFile) + ".docx");
             }
 
-            commandArgs.AddRange(new []{ inputFile, "--norestore", "--writer", "--headless", "--outdir", tmpFolder });
+            commandArgs.AddRange(new[] { inputFile, "--norestore", "--writer", "--headless", "--outdir", tmpFolder });
 
             var procStartInfo = new ProcessStartInfo(libreOfficePath);
             foreach (var arg in commandArgs) { procStartInfo.ArgumentList.Add(arg); }
@@ -103,7 +100,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             {
                 Thread.Sleep(5000);
                 pname = Process.GetProcessesByName("soffice");
-             }
+            }
 
             process.Start();
             process.WaitForExit();
@@ -125,6 +122,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             }
         }
 
+
         public static void Print(string inputFile, string printerName, string libreOfficePath)
         {
             var commandArgs = new List<string>();
@@ -136,44 +134,45 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
 
             commandArgs.Add("-p");
 
-            if (! string.IsNullOrEmpty(printerName))
-         {
-            commandArgs.Add("-pt");
-            commandArgs.Add(printerName);
-         }
+            if (!string.IsNullOrEmpty(printerName))
+            {
+                commandArgs.Add("-pt");
+                commandArgs.Add(printerName);
+            }
 
-         commandArgs.AddRange(new[] { inputFile, "--norestore", "--writer", "--headless" });
+            commandArgs.AddRange(new[] { inputFile, "--norestore", "--writer", "--headless" });
 
-         var procStartInfo = new ProcessStartInfo(libreOfficePath);
-         foreach (var arg in commandArgs) { procStartInfo.ArgumentList.Add(arg); }
-         procStartInfo.RedirectStandardOutput = true;
-         procStartInfo.UseShellExecute = false;
-         procStartInfo.CreateNoWindow = true;
-         procStartInfo.WorkingDirectory = Environment.CurrentDirectory;
+            var procStartInfo = new ProcessStartInfo(libreOfficePath);
+            foreach (var arg in commandArgs) { procStartInfo.ArgumentList.Add(arg); }
+            procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.UseShellExecute = false;
+            procStartInfo.CreateNoWindow = true;
+            procStartInfo.WorkingDirectory = Environment.CurrentDirectory;
 
-         var process = new Process() { StartInfo = procStartInfo };
-         Process[] pname = Process.GetProcessesByName("soffice");
+            var process = new Process() { StartInfo = procStartInfo };
+            Process[] pname = Process.GetProcessesByName("soffice");
 
-         //Supposedly, only one instance of Libre Office can be run simultaneously
-         while (pname.Length > 0)
-         {
-            Thread.Sleep(5000);
-            pname = Process.GetProcessesByName("soffice");
-         }
+            //Supposedly, only one instance of Libre Office can be run simultaneously
+            while (pname.Length > 0)
+            {
+                Thread.Sleep(5000);
+                pname = Process.GetProcessesByName("soffice");
+            }
 
-         process.Start();
-         process.WaitForExit();
+            process.Start();
+            process.WaitForExit();
 
-         // Check for failed exit code.
-         if (process.ExitCode != 0)
-         {
-            throw new LibreOfficeFailedException(process.ExitCode);
-         }
-      }
+            // Check for failed exit code.
+            if (process.ExitCode != 0)
+            {
+                throw new LibreOfficeFailedException(process.ExitCode);
+            }
+        }
 
-      private static void ClearDirectory(string folderName)
+
+        private static void ClearDirectory(string folderName)
         {
-            DirectoryInfo dir = new DirectoryInfo(folderName);
+            var dir = new DirectoryInfo(folderName);
 
             foreach (FileInfo fi in dir.GetFiles())
             {
@@ -187,10 +186,6 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             }
         }
 
-
     }
-
-
-
 
 }

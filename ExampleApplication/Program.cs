@@ -18,11 +18,11 @@ using DocXToPdfConverter.DocXToPdfHandlers;
 
 namespace ExampleApplication
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
-        {
 
+        public static void Main(string[] args)
+        {
             /*
              * Your TODO:
              * 1. Enter your LibreOffice path below
@@ -32,7 +32,6 @@ namespace ExampleApplication
              * Possible conversions: from HTML or from DOCX to PDF, HTML, DOCX
              *
              */
-
 
             //Enter the location of your LibreOffice soffice.exe below, full path with "soffice.exe" at the end
             //or anything you have in Linux...
@@ -66,34 +65,38 @@ namespace ExampleApplication
             //to use start and stop tags.
             //NOTE that line breaks can be inserted as what you define them in ReplacementDictionaries.NewLineTag (here we use <br/>).
 
-            var placeholders = new Placeholders();
-            placeholders.NewLineTag = "<br/>";
-            placeholders.TextPlaceholderStartTag = "##";
-            placeholders.TextPlaceholderEndTag = "##";
-            placeholders.TablePlaceholderStartTag = "==";
-            placeholders.TablePlaceholderEndTag = "==";
-            placeholders.ImagePlaceholderStartTag = "++";
-            placeholders.ImagePlaceholderEndTag = "++";
-
-            //You should be able to also use other OpenXML tags in your strings
-            placeholders.TextPlaceholders = new Dictionary<string, string>
+            var placeholders = new Placeholders
             {
-                {"Name", "Mr. Miller" },
-                {"Street", "89 Brook St" },
-                {"City", "Brookline MA 02115<br/>USA" },
-                {"InvoiceNo", "5" },
-                {"Total", "U$ 4,500" },
-                {"Date", "28 Jul 2019" }
-            };
+                NewLineTag = "<br/>",
+                TextPlaceholderStartTag = "##",
+                TextPlaceholderEndTag = "##",
+                TablePlaceholderStartTag = "==",
+                TablePlaceholderEndTag = "==",
+                ImagePlaceholderStartTag = "++",
+                ImagePlaceholderEndTag = "++",
 
+                //You should be able to also use other OpenXML tags in your strings
+                TextPlaceholders = new Dictionary<string, string>
+                {
+                    {"Name", "Mr. Miller" },
+                    {"Street", "89 Brook St" },
+                    {"City", "Brookline MA 02115<br/>USA" },
+                    {"InvoiceNo", "5" },
+                    {"Total", "U$ 4,500" },
+                    {"Date", "28 Jul 2019" },
+                    {"Website", "www.smartinmedia.com" }
+                },
 
+                HyperlinkPlaceholders = new Dictionary<string, HyperlinkElement>
+                {
+                    {"Website", new HyperlinkElement{ Link= "http://www.smartinmedia.com", Text="www.smartinmedia.com" } }
+                },
 
-            //Table ROW replacements are a little bit more complicated: With them you can
-            //fill out only one table row in a table and it will add as many rows as you 
-            //need, depending on the string Array.
-            placeholders.TablePlaceholders = new List<Dictionary<string, string[]>>
-            {
-                
+                //Table ROW replacements are a little bit more complicated: With them you can
+                //fill out only one table row in a table and it will add as many rows as you 
+                //need, depending on the string Array.
+                TablePlaceholders = new List<Dictionary<string, string[]>>
+                {
                     new Dictionary<string, string[]>()
                     {
                         {"Name", new string[]{ "Homer Simpson", "Mr. Burns", "Mr. Smithers" }},
@@ -107,21 +110,19 @@ namespace ExampleApplication
                         {"Product", new string[]{ "Software development", "Customization", "Travel expenses" }},
                         {"Price", new string[]{ "U$ 2,000", "U$ 1,000", "U$ 1,500" }},
                     }
-
+                }
             };
 
             //You have to add the images as a memory stream to the Dictionary! Place a key (placeholder) into the docx template.
             //There is a method to read files as memory streams (GetFileAsMemoryStream)
             //We already did that with <+++>ProductImage<+++>
 
-            var productImage =
-                StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "ProductImage.jpg"));
+            var productImage = StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "ProductImage.jpg"));
 
-            var qrImage =
-                StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "QRCode.PNG"));
+            var qrImage = StreamHandler.GetFileAsMemoryStream(Path.Combine(executableLocation, "QRCode.PNG"));
 
-            var productImageElement = new ImageElement() {Dpi = 96, memStream = productImage};
-            var qrImageElement = new ImageElement() {Dpi = 300, memStream = qrImage};
+            var productImageElement = new ImageElement() { Dpi = 96, MemStream = productImage };
+            var qrImageElement = new ImageElement() { Dpi = 300, MemStream = qrImage };
 
             placeholders.ImagePlaceholders = new Dictionary<string, ImageElement>
             {
@@ -129,7 +130,6 @@ namespace ExampleApplication
                 {"ProductImage", productImageElement }
             };
 
-            
             /*
              *
              *
@@ -159,7 +159,7 @@ namespace ExampleApplication
 
             //Convert from DOCX to PDF
             test.Convert(docxLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-Template-out.pdf"), placeholders);
-         
+
         }
     }
 }
