@@ -25,12 +25,17 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         private readonly MemoryStream _docxMs;
         private readonly Placeholders _rep;
         private int _imageCounter;
+        private readonly OpenSettings _openSettings = new OpenSettings() { AutoSave = true };
 
-        public DocXHandler(string docXTemplateFilename, Placeholders rep)
+
+        public DocXHandler(string docXTemplateFilename, Placeholders rep, bool office2007Compatible)
         {
             _docxMs = StreamHandler.GetFileAsMemoryStream(docXTemplateFilename);
             _rep = rep;
-
+            if (office2007Compatible)
+            {
+                _openSettings.MarkupCompatibilityProcessSettings = new MarkupCompatibilityProcessSettings(MarkupCompatibilityProcessMode.ProcessLoadedPartsOnly, FileFormatVersions.Office2007);
+            }
         }
 
 
@@ -58,7 +63,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             if (_rep.TextPlaceholders == null || _rep.TextPlaceholders.Count == 0)
                 return null;
 
-            using (var doc = WordprocessingDocument.Open(_docxMs, true))
+            using (var doc = WordprocessingDocument.Open(_docxMs, true, _openSettings))
             {
                 CleanMarkup(doc);
 
@@ -121,7 +126,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             if (_rep.HyperlinkPlaceholders == null || _rep.HyperlinkPlaceholders.Count == 0)
                 return null;
 
-            using (var doc = WordprocessingDocument.Open(_docxMs, true))
+            using (var doc = WordprocessingDocument.Open(_docxMs, true, _openSettings))
             {
                 CleanMarkup(doc);
 
@@ -206,7 +211,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             if (_rep.TablePlaceholders == null || _rep.TablePlaceholders.Count == 0)
                 return null;
 
-            using (var doc = WordprocessingDocument.Open(_docxMs, true))
+            using (var doc = WordprocessingDocument.Open(_docxMs, true, _openSettings))
             {
                 CleanMarkup(doc);
 
@@ -302,7 +307,7 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             if (_rep.ImagePlaceholders == null || _rep.ImagePlaceholders.Count == 0)
                 return null;
 
-            using (var doc = WordprocessingDocument.Open(_docxMs, true))
+            using (var doc = WordprocessingDocument.Open(_docxMs, true, _openSettings))
             {
                 CleanMarkup(doc);
 
@@ -426,7 +431,8 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
                     new DW.EffectExtent { LeftEdge = 0L, TopEdge = 0L, RightEdge = 0L, BottomEdge = 0L },
                     new DW.DocProperties { Id = (UInt32Value)1U, Name = pictureName + _imageCounter },
                     new DW.NonVisualGraphicFrameDrawingProperties(
-                    new A.GraphicFrameLocks { NoChangeAspect = true }),
+                        new A.GraphicFrameLocks { NoChangeAspect = true }
+                        ),
                     new A.Graphic(
                         new A.GraphicData(
                             new PIC.Picture(

@@ -140,7 +140,7 @@ namespace ExampleApplication
 
             //Most important: give the full path to the soffice.exe file including soffice.exe.
             //Don't know how that would be named on Linux...
-            var test = new ReportGenerator(locationOfLibreOfficeSoffice);
+            var test = new ReportGenerator(locationOfLibreOfficeSoffice, processOffice2007Compatible: true);
 
             //Convert from HTML to HTML
             test.Convert(htmlLocation, Path.Combine(Path.GetDirectoryName(htmlLocation), "Test-HTML-page-out.html"), placeholders);
