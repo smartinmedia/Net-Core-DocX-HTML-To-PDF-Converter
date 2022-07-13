@@ -93,14 +93,6 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
             procStartInfo.WorkingDirectory = Environment.CurrentDirectory;
 
             var process = new Process() { StartInfo = procStartInfo };
-            Process[] pname = Process.GetProcessesByName("soffice");
-
-            //Supposedly, only one instance of Libre Office can be run simultaneously
-            while (pname.Length > 0)
-            {
-                Thread.Sleep(5000);
-                pname = Process.GetProcessesByName("soffice");
-            }
 
             process.Start();
             process.WaitForExit();
