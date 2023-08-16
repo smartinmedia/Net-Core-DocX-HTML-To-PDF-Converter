@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
@@ -12,6 +11,8 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using System.Globalization;
+using IronSoftware.Drawing;
+using SkiaSharp;
 
 namespace OpenXmlPowerTools
 {
@@ -25,12 +26,6 @@ namespace OpenXmlPowerTools
 
     public class MetricsGetter
     {
-        private static Lazy<Graphics> Graphics { get; } = new Lazy<Graphics>(() =>
-        {
-            Image image = new Bitmap(1, 1);
-            return System.Drawing.Graphics.FromImage(image);
-        });
-
         public static XElement GetMetrics(string fileName, MetricsGetterSettings settings)
         {
             FileInfo fi = new FileInfo(fileName);
@@ -108,24 +103,33 @@ namespace OpenXmlPowerTools
             return metrics;
         }
 
-        private static int _getTextWidth(FontFamily ff, FontStyle fs, decimal sz, string text)
+        private static SKFontStyle MapFontStyle(FontStyle fontStyle)
         {
-            try
+            var weight = (fontStyle & FontStyle.Bold) != 0 ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal;
+            var width = SKFontStyleWidth.Normal; // No direct mapping in .NET's FontStyle
+            var slant = (fontStyle & FontStyle.Italic) != 0 ? SKFontStyleSlant.Italic : SKFontStyleSlant.Upright;
+
+            return new SKFontStyle(weight, width, slant);
+        }
+
+        private static int _getTextWidth(string fontFamily, FontStyle fontStyle, decimal size, string text)
+        {
+            var skFontStyle = MapFontStyle(fontStyle);
+
+            using (var paint = new SKPaint())
             {
-                using (var f = new Font(ff, (float)sz / 2f, fs))
-                {
-                    var proposedSize = new Size(int.MaxValue, int.MaxValue);
-                    var sf = Graphics.Value.MeasureString(text, f, proposedSize);
-                    return (int) sf.Width;
-                }
-            }
-            catch
-            {
-                return 0;
+                paint.Typeface = SKTypeface.FromFamilyName(fontFamily, skFontStyle);
+                paint.TextSize = (float)size;
+
+                // Measure the text's width and height
+                var bounds = new SKRect();
+                paint.MeasureText(text, ref bounds);
+
+                return (int)bounds.Width;
             }
         }
 
-        public static int GetTextWidth(FontFamily ff, FontStyle fs, decimal sz, string text)
+        public static int GetTextWidth(string ff, FontStyle fs, decimal sz, string text)
         {
             try
             {
@@ -149,7 +153,7 @@ namespace OpenXmlPowerTools
                     {
                         // if both regular and bold fail, then get metrics for Times New Roman
                         // use the original FontStyle (in fs)
-                        var ff2 = new FontFamily("Times New Roman");
+                        var ff2 = "Times New Roman";
                         return _getTextWidth(ff2, fs, sz, text);
                     }
                 }
