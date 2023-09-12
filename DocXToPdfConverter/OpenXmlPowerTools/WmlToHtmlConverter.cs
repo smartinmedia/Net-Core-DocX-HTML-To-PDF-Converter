@@ -4,12 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using DocXToPdfConverter;
+using IronSoftware.Drawing;
 
 // 200e lrm - LTR
 // 200f rlm - RTL
@@ -120,7 +121,7 @@ namespace OpenXmlPowerTools
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ImageInfo
     {
-        public Bitmap Bitmap;
+        public AnyBitmap Bitmap;
         public XAttribute ImgStyleAttribute;
         public string ContentType;
         public XElement DrawingElement;
@@ -2247,9 +2248,9 @@ namespace OpenXmlPowerTools
                 if (_knownFamilies == null)
                 {
                     _knownFamilies = new HashSet<string>();
-                    var families = FontFamily.Families;
+                    var families = FontFamily.GetFontFamilies();
                     foreach (var fam in families)
-                        _knownFamilies.Add(fam.Name);
+                        _knownFamilies.Add(fam);
                 }
                 return _knownFamilies;
             }
@@ -2275,10 +2276,10 @@ namespace OpenXmlPowerTools
                 return 0;
 
             // in theory, all unknown fonts are found by the above test, but if not...
-            FontFamily ff;
+            string ff;
             try
             {
-                ff = new FontFamily(fontName);
+                ff = (fontName);
             }
             catch (ArgumentException)
             {
@@ -3078,7 +3079,7 @@ namespace OpenXmlPowerTools
                 return null;
 
             using (var partStream = imagePart.GetStream())
-            using (var bitmap = new Bitmap(partStream))
+            using (var bitmap = new AnyBitmap(partStream))
             {
                 if (extentCx != null && extentCy != null)
                 {
@@ -3144,7 +3145,7 @@ namespace OpenXmlPowerTools
                 {
                     try
                     {
-                        using (var bitmap = new Bitmap(partStream))
+                        using (var bitmap = new AnyBitmap(partStream))
                         {
                             var imageInfo = new ImageInfo()
                             {

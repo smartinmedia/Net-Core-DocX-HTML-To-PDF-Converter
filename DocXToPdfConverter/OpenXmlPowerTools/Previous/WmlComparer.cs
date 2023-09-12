@@ -10,7 +10,7 @@ using System.IO.Packaging;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using System.Drawing;
+using IronSoftware.Drawing;
 using System.Security.Cryptography;
 using OpenXmlPowerTools;
 

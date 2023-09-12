@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -11,10 +10,10 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Validation;
-using OpenXmlPowerTools;
 using System.Text;
 using DocumentFormat.OpenXml;
-using System.Drawing.Imaging;
+using IronSoftware.Drawing;
+using static IronSoftware.Drawing.AnyBitmap;
 
 namespace OpenXmlPowerTools
 {
@@ -374,7 +373,7 @@ AAsACwDBAgAAbCwAAAAA";
                                 localDirInfo.Create();
                             ++imageCounter;
                             string extension = imageInfo.ContentType.Split('/')[1].ToLower();
-                            ImageFormat imageFormat = null;
+                            ImageFormat? imageFormat = null;
                             if (extension == "png")
                             {
                                 // Convert png to jpeg.
@@ -408,7 +407,7 @@ AAsACwDBAgAAbCwAAAAA";
                                 imageCounter.ToString() + "." + extension;
                             try
                             {
-                                imageInfo.Bitmap.Save(imageFileName, imageFormat);
+                                imageInfo.Bitmap.SaveAs(imageFileName, imageFormat.Value);
                             }
                             catch (System.Runtime.InteropServices.ExternalException)
                             {

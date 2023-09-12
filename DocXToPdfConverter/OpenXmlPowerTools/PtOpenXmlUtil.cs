@@ -12,9 +12,8 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using DocumentFormat.OpenXml.Packaging;
-using System.Drawing;
-using Font = System.Drawing.Font;
-using FontFamily = System.Drawing.FontFamily;
+using IronSoftware.Drawing;
+using DocXToPdfConverter;
 
 // ReSharper disable InconsistentNaming
 
@@ -637,9 +636,9 @@ namespace OpenXmlPowerTools
             if (KnownFamilies == null)
             {
                 KnownFamilies = new HashSet<string>();
-                var families = FontFamily.Families;
+                var families = FontFamily.GetFontFamilies();
                 foreach (var fam in families)
-                    KnownFamilies.Add(fam.Name);
+                    KnownFamilies.Add(fam);
             }
 
             var fontName = (string)r.Attribute(PtOpenXml.pt + "FontName");
@@ -668,10 +667,10 @@ namespace OpenXmlPowerTools
             if (!KnownFamilies.Contains(fontName))
                 return 0;
             // in theory, all unknown fonts are found by the above test, but if not...
-            FontFamily ff;
+            string ff;
             try
             {
-                ff = new FontFamily(fontName);
+                ff = (fontName);
             }
             catch (ArgumentException)
             {

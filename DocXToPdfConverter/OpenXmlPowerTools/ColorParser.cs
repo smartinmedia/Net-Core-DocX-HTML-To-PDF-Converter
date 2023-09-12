@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using System.Drawing;
+using IronSoftware.Drawing;
 
 namespace OpenXmlPowerTools
 {
@@ -18,7 +17,7 @@ namespace OpenXmlPowerTools
             {
                 color = Color.FromName(name);
 
-                return color.IsNamedColor;
+                return color != null;
             }
             catch
             {

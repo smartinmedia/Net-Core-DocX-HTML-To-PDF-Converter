@@ -17,7 +17,7 @@ Resource Center and Documentation: http://openxmldeveloper.org/wiki/w/wiki/power
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
+using IronSoftware.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;

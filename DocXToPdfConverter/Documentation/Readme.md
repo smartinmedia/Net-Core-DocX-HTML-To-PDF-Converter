@@ -28,16 +28,16 @@ Report from DOCX / HTML to PDF Converter can parse the source document and intro
 Don't get scared away that I use LibreOffice, it is easier than you may think!
 1. LibreOffice - just get the PORTABLE EDITION as you don't screw up your webserver with an installation. The portable version just runs without any installation. We need LibreOffice for converting from DOCX or from HTML to PDF and DOCX, etc
 
-2. Nuget: 
-* Microsoft.NetCore.App
+2. Nuget:
 * Document.Format.OpenXml
-* System.Drawing.Common
+* IronSoftware.System.Drawing;
+* SkiaSharp
 
 3. The OpenXml PowerTools (thanks to Eric White for this great work), which I already included into the project, the whole code!
 
 ## Get started here!
 
-1. Add dependencies to a) Document.Format.OpenXml (by Microsoft). For the OpenXml Powertools by Eric White (which are already included in the project), add System.Drawing.Common (for .NET Core). The regular System.Drawing won't work!
+1. Add dependencies to a) Document.Format.OpenXml (by Microsoft). For the OpenXml Powertools by Eric White (which are already included in the project).
 
 2. Download LibreOffice (https://www.libreoffice.org/download/portable-versions/). I recommend the portable edition as it does not install anything in your server. It is like unzipping files onto your harddrive. Note the path to "soffice.exe" (I don't know what the file is called in Linux / MacOS, probably just soffice. It is an executable to run a headless, mute version of LibreOffice for conversion processes). On my Windows machine, it is under: C:\PortableApps\LibreOfficePortable\App\libreoffice\program\soffice.exe. 
 

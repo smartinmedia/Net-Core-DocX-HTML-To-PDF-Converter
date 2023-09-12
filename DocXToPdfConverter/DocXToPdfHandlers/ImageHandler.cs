@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using DocumentFormat.OpenXml.Packaging;
+using IronSoftware.Drawing;
+using static IronSoftware.Drawing.AnyBitmap;
 
 namespace DocXToPdfConverter.DocXToPdfHandlers
 {
     public static class ImageHandler
     {
-
-        public static Image GetImage(this MemoryStream ms)
+        public static AnyBitmap GetImage(this MemoryStream ms)
         {
             ms.Position = 0;
-            var image = Image.FromStream(ms);
+            var image = AnyBitmap.FromStream(ms);
             ms.Position = 0;
             return image;
         }
@@ -20,28 +19,28 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         public static ImagePartType GetImagePartType(this MemoryStream stream)
         {
             stream.Position = 0;
-            using (var image = Image.FromStream(stream))
+            using (var image = AnyBitmap.FromStream(stream))
             {
                 stream.Position = 0;
 
 
-                if (ImageFormat.Jpeg.Equals(image.RawFormat))
+                if (ImageFormat.Jpeg.Equals(image.GetImageFormat()))
                 {
                     return ImagePartType.Jpeg;
                 }
-                else if (ImageFormat.Png.Equals(image.RawFormat))
+                else if (ImageFormat.Png.Equals(image.GetImageFormat()))
                 {
                     return ImagePartType.Png;
                 }
-                else if (ImageFormat.Gif.Equals(image.RawFormat))
+                else if (ImageFormat.Gif.Equals(image.GetImageFormat()))
                 {
                     return ImagePartType.Gif;
                 }
-                else if (ImageFormat.Bmp.Equals(image.RawFormat))
+                else if (ImageFormat.Bmp.Equals(image.GetImageFormat()))
                 {
                     return ImagePartType.Bmp;
                 }
-                else if (ImageFormat.Tiff.Equals(image.RawFormat))
+                else if (ImageFormat.Tiff.Equals(image.GetImageFormat()))
                 {
                     return ImagePartType.Tiff;
                 }
@@ -53,27 +52,27 @@ namespace DocXToPdfConverter.DocXToPdfHandlers
         public static string GetImageType(this MemoryStream stream)
         {
             stream.Position = 0;
-            using (var image = Image.FromStream(stream))
+            using (var image = AnyBitmap.FromStream(stream))
             {
                 stream.Position = 0;
 
-                if (ImageFormat.Jpeg.Equals(image.RawFormat))
+                if (ImageFormat.Jpeg.Equals(image.GetImageFormat()))
                 {
                     return "jpeg";
                 }
-                else if (ImageFormat.Png.Equals(image.RawFormat))
+                else if (ImageFormat.Png.Equals(image.GetImageFormat()))
                 {
                     return "png";
                 }
-                else if (ImageFormat.Gif.Equals(image.RawFormat))
+                else if (ImageFormat.Gif.Equals(image.GetImageFormat()))
                 {
                     return "gif";
                 }
-                else if (ImageFormat.Bmp.Equals(image.RawFormat))
+                else if (ImageFormat.Bmp.Equals(image.GetImageFormat()))
                 {
                     return "bmp";
                 }
-                else if (ImageFormat.Tiff.Equals(image.RawFormat))
+                else if (ImageFormat.Tiff.Equals(image.GetImageFormat()))
                 {
                     return "tiff";
                 }
